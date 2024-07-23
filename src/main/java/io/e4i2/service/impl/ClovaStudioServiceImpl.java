@@ -31,6 +31,9 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
     @Value("${clovastudio.api.request.id}}")
     private String requestId;
     
+    @Value("${apigw.api.key}")
+    private String apigwApiKey;
+    
     
     private final ObjectMapper objectMapper;
     
@@ -39,7 +42,7 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
         
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-NCP-CLOVASTUDIO-API-KEY", apiKey);
-        headers.set("X-NCP-APIGW-API-KEY", "4vL7buWu31HnrCQDxzJzBffKtYbp3stF3pstGgmX");
+        headers.set("X-NCP-APIGW-API-KEY", apigwApiKey);
         headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", requestId);
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "text/event-stream");
