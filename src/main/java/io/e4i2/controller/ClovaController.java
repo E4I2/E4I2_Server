@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClovaController {
     
     private final ClovaStudioService clovaStudioService;
-    
+
+
+
     @PostMapping("/chat")
     public String chat(@RequestBody String messages) {
         
