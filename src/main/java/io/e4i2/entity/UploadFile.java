@@ -26,5 +26,6 @@ public class UploadFile {
         this.locationFilename = storeFilename;
         this.fileUrl = fileUrl;
         this.uploadTime = LocalDateTime.now();
+        
     }
 }
