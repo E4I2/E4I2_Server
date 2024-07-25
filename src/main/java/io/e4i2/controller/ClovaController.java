@@ -2,6 +2,7 @@ package io.e4i2.controller;
 
 
 import io.e4i2.dto.ResponseDTO;
+import io.e4i2.dto.UserMessage;
 import io.e4i2.service.ClovaStudioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +20,8 @@ public class ClovaController {
 
 
     @PostMapping("/chat")
-    public ResponseDTO chat(@RequestBody String messages) {
+    public ResponseDTO chat(@RequestBody UserMessage userMessage) {
         
-        return clovaStudioService.getResponse(messages);
+        return clovaStudioService.getResponse(userMessage);
     }
 }

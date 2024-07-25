@@ -1,11 +1,7 @@
 package io.e4i2.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.e4i2.dto.ResponseDTO;
-import io.e4i2.dto.Data;
-import io.e4i2.dto.Message;
-import io.e4i2.dto.Result;
+import io.e4i2.dto.*;
 import io.e4i2.service.ClovaStudioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,28 +41,16 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
     private final ObjectMapper objectMapper;
     
     
-    public ResponseDTO getResponse(String userMessage) {
+    public ResponseDTO getResponse(UserMessage userMessage) {
+        if (userMessage.getMessage() == null) {
+            return basicMessage();
+        }
+        
         RestTemplate restTemplate = new RestTemplate();
         
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-NCP-CLOVASTUDIO-API-KEY", apiKey);
-        headers.set("X-NCP-APIGW-API-KEY", apigwApiKey);
-        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", requestId);
-        headers.set("Content-Type", "application/json");
-        headers.set("Accept", "text/event-stream");
+        HttpHeaders headers = setHeader();
         
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("messages", List.of(
-                Map.of("role", "system", "content", "사용자의 메시지에 따라 응답을 생성합니다."),
-                Map.of("role", "user", "content", userMessage)
-        ));
-        requestBody.put("topP", 0.8);
-        requestBody.put("topK", 0);
-        requestBody.put("maxTokens", 256);
-        requestBody.put("temperature", 0.5);
-        requestBody.put("repeatPenalty", 5.0);
-        requestBody.put("includeAiFilters", true);
-        requestBody.put("seed", 0);
+        Map<String, Object> requestBody = getRequestBody(userMessage);
         
         try {
             String jsonRequestBody = objectMapper.writeValueAsString(requestBody);
@@ -79,36 +63,37 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
             
             // 이벤트 스트림에서 JSON 부분 추출
             List<String> jsonMessages = extractJsonMessages(responseBody);
-            StringBuilder combinedMessage = new StringBuilder();
-            
-            for (String jsonMessage : jsonMessages) {
-                JsonNode rootNode = objectMapper.readTree(jsonMessage);
-                JsonNode messageNode = rootNode.path("message");
-                if (!messageNode.isMissingNode()) {
-                    String messageText = messageNode.path("content").asText();
-                    combinedMessage.append(messageText).append(" ");
-                }
+            ResponseDTO.MessageWrapper lastMessageWrapper = null;
+            if (!jsonMessages.isEmpty()) {
+                String lastJsonMessage = jsonMessages.get(jsonMessages.size() - 2);
+                lastMessageWrapper = objectMapper.readValue(lastJsonMessage, ResponseDTO.MessageWrapper.class);
             }
             
+            
             // 응답 구성
-            Result result = new Result();
+            ResponseDTO.Result result = new ResponseDTO.Result();
             result.setStatus(200);
             result.setMessage("SUCCESS");
             result.setCode("success");
             
-            String finalMessageText = combinedMessage.toString().trim();
-            
-            Message message = new Message();
-            message.setText(finalMessageText);
-            message.setImageUrl(null);
-            
-            Data data = new Data();
+            ResponseDTO.MessageData data = new ResponseDTO.MessageData();
             data.setProfileImageUrl("https://imageUrl");
-            data.setMessages(List.of(message));
+            
+            if (lastMessageWrapper != null) {
+                data.setMessages(List.of(lastMessageWrapper));
+            } else {
+                ResponseDTO.Message message = new ResponseDTO.Message();
+                message.setRole("assistant");
+                
+                ResponseDTO.MessageWrapper messageWrapper = new ResponseDTO.MessageWrapper();
+                messageWrapper.setMessage(message);
+                
+                data.setMessages(List.of(messageWrapper));
+            }
             
             ResponseDTO finalResponseDTO = new ResponseDTO();
-            finalResponseDTO.setResult(result);
             finalResponseDTO.setData(data);
+            finalResponseDTO.setResult(result);
             
             return finalResponseDTO;
         } catch (HttpClientErrorException e) {
@@ -122,6 +107,56 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
             throw new RuntimeException("Unexpected error: " + e.getMessage(), e);
         }
     }
+    
+    private HttpHeaders setHeader() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-NCP-CLOVASTUDIO-API-KEY", apiKey);
+        headers.set("X-NCP-APIGW-API-KEY", apigwApiKey);
+        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", requestId);
+        headers.set("Content-Type", "application/json");
+        headers.set("Accept", "text/event-stream");
+        return headers;
+    }
+    
+    private ResponseDTO basicMessage() {
+        ResponseDTO.Result result = new ResponseDTO.Result();
+        result.setStatus(200);
+        result.setMessage("SUCCESS");
+        result.setCode("success");
+        
+        ResponseDTO.Message message = new ResponseDTO.Message();
+        message.setContent("안녕하세요 무엇을 도와 드릴까요?");
+        message.setRole("assistant");
+        
+        ResponseDTO.MessageWrapper messageWrapper = new ResponseDTO.MessageWrapper();
+        messageWrapper.setMessage(message);
+        
+        ResponseDTO.MessageData data = new ResponseDTO.MessageData();
+        data.setProfileImageUrl(null);
+        data.setMessages(List.of(messageWrapper));
+        
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setData(data);
+        responseDTO.setResult(result);
+        
+        return responseDTO;
+    }
+    
+    private static Map<String, Object> getRequestBody(UserMessage userMessage) {
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("messages", List.of(
+                Map.of("role", "user", "content", userMessage.getMessage())
+        ));
+        requestBody.put("topP", 0.8);
+        requestBody.put("topK", 0);
+        requestBody.put("maxTokens", 256);
+        requestBody.put("temperature", 0.5);
+        requestBody.put("repeatPenalty", 5.0);
+        requestBody.put("includeAiFilters", true);
+        requestBody.put("seed", 0);
+        return requestBody;
+    }
+    
     private List<String> extractJsonMessages(String responseBody) {
         List<String> jsonMessages = new ArrayList<>();
         String[] events = responseBody.split("\n\n");
