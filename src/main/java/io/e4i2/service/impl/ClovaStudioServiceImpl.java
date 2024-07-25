@@ -79,21 +79,14 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
             
             // 이벤트 스트림에서 JSON 부분 추출
             List<String> jsonMessages = extractJsonMessages(responseBody);
-            List<Message> aiMessages = new ArrayList<>();
+            StringBuilder combinedMessage = new StringBuilder();
             
             for (String jsonMessage : jsonMessages) {
                 JsonNode rootNode = objectMapper.readTree(jsonMessage);
                 JsonNode messageNode = rootNode.path("message");
                 if (!messageNode.isMissingNode()) {
                     String messageText = messageNode.path("content").asText();
-                    String[] splitMessages = messageText.split("\\r?\\n\\r?\\n"); // 두 줄바꿈 문자를 기준으로 분리
-                    for (String splitMessage : splitMessages) {
-                        if (!splitMessage.trim().isEmpty()) {
-                            Message message = new Message();
-                            message.setText(splitMessage.trim());
-                            aiMessages.add(message);
-                        }
-                    }
+                    combinedMessage.append(messageText).append(" ");
                 }
             }
             
@@ -103,21 +96,15 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
             result.setMessage("SUCCESS");
             result.setCode("success");
             
-            List<Message> responseMessages = new ArrayList<>();
-            if (!aiMessages.isEmpty()) {
-                responseMessages.addAll(aiMessages);
-            } else {
-                Message defaultMessage = new Message();
-                defaultMessage.setText("AI 응답 메시지가 없습니다.");
-                defaultMessage.setImageUrl(null);
-                responseMessages.add(defaultMessage);
-            }
+            String finalMessageText = combinedMessage.toString().trim();
             
-            // 추가 메시지 설정
+            Message message = new Message();
+            message.setText(finalMessageText);
+            message.setImageUrl(null);
             
             Data data = new Data();
             data.setProfileImageUrl("https://imageUrl");
-            data.setMessages(responseMessages);
+            data.setMessages(List.of(message));
             
             ResponseDTO finalResponseDTO = new ResponseDTO();
             finalResponseDTO.setResult(result);
