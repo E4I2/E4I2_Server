@@ -1,7 +1,7 @@
 package io.e4i2.service;
 
-import java.util.Map;
+import io.e4i2.dto.ResponseDTO;
 
 public interface ClovaStudioService {
-    String getResponse(String messages);
+    ResponseDTO getResponse(String messages);
 }
