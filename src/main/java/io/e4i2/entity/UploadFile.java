@@ -1,9 +1,6 @@
 package io.e4i2.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,12 +17,14 @@ public class UploadFile {
     private String locationFilename;
     private String fileUrl;
     private LocalDateTime uploadTime;
+    @Enumerated(EnumType.STRING)
+    private Mbti mbti;
     
-    public UploadFile(String originalFilename, String storeFilename, String fileUrl) {
+    public UploadFile(String originalFilename, String storeFilename, String fileUrl,Mbti mbti) {
         this.originalFilename = originalFilename;
         this.locationFilename = storeFilename;
         this.fileUrl = fileUrl;
         this.uploadTime = LocalDateTime.now();
-        
+        this.mbti = mbti;
     }
 }

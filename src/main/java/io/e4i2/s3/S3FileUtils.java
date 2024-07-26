@@ -1,6 +1,7 @@
 package io.e4i2.s3;
 
 
+import io.e4i2.entity.Mbti;
 import io.e4i2.entity.UploadFile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,18 +25,18 @@ public class S3FileUtils {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
     
-    public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles) {
+    public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles, Mbti mbti) {
         List<UploadFile> uploadFiles = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             if (!multipartFile.isEmpty()) {
-                uploadFiles.add(storeFile(multipartFile));
+                uploadFiles.add(storeFile(multipartFile,mbti));
             }
         }
         
         return uploadFiles;
     }
     
-    public UploadFile storeFile(MultipartFile multipartFile) {
+    public UploadFile storeFile(MultipartFile multipartFile, Mbti mbti) {
         
         if (multipartFile.isEmpty()) {
             return null;
@@ -49,7 +50,7 @@ public class S3FileUtils {
                     .key(storeFileName)
                     .build(), software.amazon.awssdk.core.sync.RequestBody.fromBytes(multipartFile.getBytes()));
             String fileUrl = s3Client.utilities().getUrl(b -> b.bucket(bucketName).key(storeFileName)).toExternalForm();
-            return new UploadFile(originalFilename, storeFileName, fileUrl);
+            return new UploadFile(originalFilename, storeFileName, fileUrl,mbti);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

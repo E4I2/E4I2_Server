@@ -1,5 +1,6 @@
 package io.e4i2.service.impl;
 
+import io.e4i2.entity.Mbti;
 import io.e4i2.entity.UploadFile;
 import io.e4i2.repository.UploadFileRepository;
 import io.e4i2.s3.S3FileUtils;
@@ -18,8 +19,8 @@ public class S3ServiceImpl implements S3Service {
     private final UploadFileRepository uploadFileRepository;
     private final S3FileUtils s3FileUtils;
     
-    public List<String> saveFile(List<MultipartFile> multipartFiles) {
-        List<UploadFile> uploadFiles = s3FileUtils.storeFiles(multipartFiles);
+    public List<String> saveFile(List<MultipartFile> multipartFiles, Mbti mbti) {
+        List<UploadFile> uploadFiles = s3FileUtils.storeFiles(multipartFiles,mbti);
         uploadFileRepository.saveAll(uploadFiles);
         return uploadFiles.stream()
                 .map(UploadFile::getFileUrl)
