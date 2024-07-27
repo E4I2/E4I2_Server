@@ -169,10 +169,10 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
         
         return responseDTO;
     }
-    
     private Map<String, Object> getRequestBody(UserMessage userMessage) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("messages", List.of(
+                Map.of("role", "system", "content", getSystemPrompt(userMessage.getMbti())),
                 Map.of("role", "user", "content", userMessage.getMessage())
         ));
         requestBody.put("topP", 0.8);
@@ -185,6 +185,14 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
         return requestBody;
     }
     
+    private String getSystemPrompt(Mbti mbti) {
+        QPrompt qPrompt = QPrompt.prompt;
+        Prompt prompt = queryFactory
+                .selectFrom(qPrompt)
+                .where(qPrompt.mbti.eq(mbti))
+                .fetchOne();
+        return prompt != null ? prompt.getDefaultPrompt() : "MBTI 유형을 찾을 수 없습니다.";
+    }
     private List<String> extractJsonMessages(String responseBody) {
         List<String> jsonMessages = new ArrayList<>();
         String[] events = responseBody.split("\n\n");

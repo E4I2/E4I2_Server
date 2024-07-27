@@ -17,9 +17,6 @@ public class DeviceEvtController {
 
     @PostMapping("/evt")
     public void evt(@RequestBody DeviceEvtDTO deviceEvtDTO) {
-
         deviceEvtService.insertDevice(deviceEvtDTO);
-
-
     }
 }
