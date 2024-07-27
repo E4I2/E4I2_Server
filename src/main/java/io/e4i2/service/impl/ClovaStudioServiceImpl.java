@@ -1,13 +1,12 @@
 package io.e4i2.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.e4i2.dto.ResponseDTO;
 import io.e4i2.dto.UserMessage;
-import io.e4i2.entity.Mbti;
-import io.e4i2.entity.QUploadFile;
-import io.e4i2.entity.UploadFile;
+import io.e4i2.entity.*;
 import io.e4i2.service.ClovaStudioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -42,7 +40,6 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
     @Value("${apigw.api.key}")
     private String apigwApiKey;
     
-    
     private final ObjectMapper objectMapper;
     
     private final JPAQueryFactory queryFactory;
@@ -52,23 +49,18 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
             return basicMessage(userMessage.getMbti());
         }
         
-        RestTemplate restTemplate = new RestTemplate();
-        
-        HttpHeaders headers = setHeader();
-        
-        Map<String, Object> requestBody = getRequestBody(userMessage);
-        
         try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = setHeader();
+            Map<String, Object> requestBody = getRequestBody(userMessage);
             String jsonRequestBody = objectMapper.writeValueAsString(requestBody);
             HttpEntity<String> entity = new HttpEntity<>(jsonRequestBody, headers);
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, entity, String.class);
-            
             String responseBody = response.getBody();
             
             // 이벤트 스트림에서 JSON 부분 추출
             List<String> jsonMessages = extractJsonMessages(responseBody);
-            ResponseDTO.MessageWrapper lastMessageWrapper = getMessageWrapper(jsonMessages);
-            
+            ResponseDTO.Message lastMessage = getMessage(jsonMessages);
             
             // 응답 구성
             ResponseDTO.Result result = new ResponseDTO.Result();
@@ -84,16 +76,13 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
                     .fetchOne();
             data.setProfileImageUrl(findUploadUrl.getFileUrl() == null ? "" : findUploadUrl.getFileUrl());
             
-            if (lastMessageWrapper != null) {
-                data.setMessages(List.of(lastMessageWrapper));
+            if (lastMessage != null) {
+                data.setMessages(List.of(lastMessage));
             } else {
                 ResponseDTO.Message message = new ResponseDTO.Message();
-                message.setRole("assistant");
+                message.setText("assistant");
                 
-                ResponseDTO.MessageWrapper messageWrapper = new ResponseDTO.MessageWrapper();
-                messageWrapper.setMessage(message);
-                
-                data.setMessages(List.of(messageWrapper));
+                data.setMessages(List.of(message));
             }
             
             ResponseDTO finalResponseDTO = new ResponseDTO();
@@ -107,14 +96,20 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
         }
     }
     
-    private ResponseDTO.MessageWrapper getMessageWrapper(List<String> jsonMessages) throws JsonProcessingException {
-        ResponseDTO.MessageWrapper lastMessageWrapper = null;
+    private ResponseDTO.Message getMessage(List<String> jsonMessages) throws JsonProcessingException {
         if (!jsonMessages.isEmpty()) {
-            String lastJsonMessage = jsonMessages.get(jsonMessages.size() - 2);
-            lastMessageWrapper = objectMapper.readValue(lastJsonMessage, ResponseDTO.MessageWrapper.class);
+            String lastJsonMessage = jsonMessages.get(jsonMessages.size() - 2); // 마지막 JSON 메시지 가져오기
+            JsonNode jsonNode = objectMapper.readTree(lastJsonMessage);
+            JsonNode messageNode = jsonNode.get("message");
+            if (messageNode != null) {
+                ResponseDTO.Message message = new ResponseDTO.Message();
+                message.setText(messageNode.get("content").asText());
+                return message;
+            }
         }
-        return lastMessageWrapper;
+        return null; // 메시지가 없는 경우 null 반환
     }
+    
     
     private HttpHeaders setHeader() {
         HttpHeaders headers = new HttpHeaders();
@@ -128,32 +123,45 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
     
     private ResponseDTO basicMessage(Mbti mbti) {
         ResponseDTO.Result result = new ResponseDTO.Result();
+        RestTemplate restTemplate = new RestTemplate();
+        
+        QPrompt qPrompt = QPrompt.prompt;
+        Prompt prompt = queryFactory
+                .selectFrom(qPrompt)
+                .where(qPrompt.mbti.eq(mbti))
+                .fetchOne();
+        
+        UserMessage userMessage = new UserMessage();
+        userMessage.setMessage(prompt.getDefaultPrompt());
+        Map<String, Object> requestBody = getRequestBody(userMessage);
+        HttpHeaders headers = setHeader();
+        String jsonRequestBody = null;
+        try {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        HttpEntity<String> entity = new HttpEntity<>(jsonRequestBody, headers);
+        
+        restTemplate.exchange(apiUrl, HttpMethod.POST, entity, String.class);
         result.setStatus(200);
         result.setMessage("SUCCESS");
         result.setCode("success");
         
         ResponseDTO.Message message1 = new ResponseDTO.Message();
         ResponseDTO.Message message2 = new ResponseDTO.Message();
-        message1.setContent("대화 시뮬레이션을 시작할게요");
-        message1.setRole("assistant");
-        message2.setContent("안녕하세요");
-        message2.setRole("assistant");
-        QUploadFile qUploadFile = QUploadFile.uploadFile;
+        message1.setText("대화 시뮬레이션을 시작할게요");
+        message2.setText("안녕하세요");
         
+        QUploadFile qUploadFile = QUploadFile.uploadFile;
         UploadFile findFileUrl = queryFactory
                 .selectFrom(qUploadFile)
                 .where(qUploadFile.mbti.eq(mbti))
                 .fetchOne();
         
-        ResponseDTO.MessageWrapper messageWrapper1 = new ResponseDTO.MessageWrapper();
-        ResponseDTO.MessageWrapper messageWrapper2 = new ResponseDTO.MessageWrapper();
-        messageWrapper1.setMessage(message1);
-        messageWrapper2.setMessage(message2);
         ResponseDTO.MessageData data = new ResponseDTO.MessageData();
-        
-        
         data.setProfileImageUrl(findFileUrl.getFileUrl() == null ? "" : findFileUrl.getFileUrl());
-        data.setMessages(List.of(messageWrapper1, messageWrapper2));
+        data.setMessages(List.of(message1, message2));
         
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setData(data);
@@ -162,7 +170,7 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
         return responseDTO;
     }
     
-    private static Map<String, Object> getRequestBody(UserMessage userMessage) {
+    private Map<String, Object> getRequestBody(UserMessage userMessage) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("messages", List.of(
                 Map.of("role", "user", "content", userMessage.getMessage())
@@ -189,4 +197,3 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
         return jsonMessages;
     }
 }
-

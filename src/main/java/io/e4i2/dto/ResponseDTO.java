@@ -15,20 +15,13 @@ public class ResponseDTO {
     @Setter
     public static class MessageData {
         private String profileImageUrl;
-        private List<MessageWrapper> messages;
-    }
-    
-    @Getter
-    @Setter
-    public static class MessageWrapper {
-        private Message message;
+        private List<Message> messages;
     }
     
     @Getter
     @Setter
     public static class Message {
-        private String role;
-        private String content;
+        private String text;
     }
     
     @Getter

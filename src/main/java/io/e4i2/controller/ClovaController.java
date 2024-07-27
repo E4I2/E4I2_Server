@@ -1,6 +1,7 @@
 package io.e4i2.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.e4i2.dto.ResponseDTO;
 import io.e4i2.dto.UserMessage;
 import io.e4i2.service.ClovaStudioService;
@@ -20,7 +21,7 @@ public class ClovaController {
 
 
     @PostMapping("/chat")
-    public ResponseDTO chat(@RequestBody UserMessage userMessage) {
+    public ResponseDTO chat(@RequestBody UserMessage userMessage) throws JsonProcessingException {
         
         return clovaStudioService.getResponse(userMessage);
     }
