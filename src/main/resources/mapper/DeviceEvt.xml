@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.e4i2.repository.DeviceEvtDAO">
+
+    <!-- SQL 쿼리를 정의하는 부분 -->
+
+    <!-- 디바이스별 API 호출시 디바이스명 인서트 -->
+    <insert id="insertDevice" parameterType="String" useGeneratedKeys="true" keyProperty="deviceId">
+        INSERT INTO DEVICE
+        (DEVICE_NAME)
+        VALUES
+        (#{deviceName})
+    </insert>
+
+    <!-- 디바이스별 API 호출시 디바이스 로그 인서트 -->
+    <insert id="insertDeviceEvt" parameterType="io.e4i2.dto.DeviceEvtDTO">
+        INSERT INTO  DEVICE_EVT
+        (DEVICE_ID, EVENT_NAME, EVENT_TIME, PAGE_TITLE)
+        VALUES
+        (#{deviceId}, #{eventName}, NOW(), #{pageTitle})
+    </insert>
+
+
+
+</mapper>
