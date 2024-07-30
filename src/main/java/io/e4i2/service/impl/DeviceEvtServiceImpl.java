@@ -5,9 +5,11 @@ import io.e4i2.repository.DeviceEvtDAO;
 import io.e4i2.service.DeviceEvtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DeviceEvtServiceImpl implements DeviceEvtService {
 
     
@@ -17,7 +19,10 @@ public class DeviceEvtServiceImpl implements DeviceEvtService {
     public void insertDevice(DeviceEvtDTO deviceEvtDTO) {
         DeviceEvtDTO deviceEvtDTOValue = deviceEvtDAO.duplicationCheck(deviceEvtDTO);
         if (deviceEvtDTOValue == null) {
-            int devicePk = deviceEvtDAO.insertDevice(deviceEvtDTO);
+            deviceEvtDAO.insertDevice(deviceEvtDTO);
+            DeviceEvtDTO dto = deviceEvtDAO.duplicationCheck(deviceEvtDTO);
+            deviceEvtDTO.setDevicePk(dto.getDevicePk());
+            deviceEvtDAO.insertDeviceEvt(deviceEvtDTO);
         }else {
             deviceEvtDTO.setDevicePk(deviceEvtDTOValue.getDevicePk());
             deviceEvtDAO.insertDeviceEvt(deviceEvtDTO);
