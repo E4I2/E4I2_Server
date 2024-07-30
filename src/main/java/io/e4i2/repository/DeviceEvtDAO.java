@@ -9,5 +9,7 @@ public interface DeviceEvtDAO {
     void insertDeviceEvt(DeviceEvtDTO deviceEvtDTO);
 
     int insertDevice(DeviceEvtDTO deviceEvtDTO);
+    
+    DeviceEvtDTO duplicationCheck(DeviceEvtDTO deviceEvtDTO);
 
 }

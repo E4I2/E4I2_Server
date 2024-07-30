@@ -21,7 +21,12 @@
         VALUES
         (#{devicePk}, #{eventName}, NOW())
     </insert>
-
+ <select id="duplicationCheck" parameterType="io.e4i2.dto.DeviceEvtDTO" resultType="io.e4i2.dto.DeviceEvtDTO">
+     SELECT DEVICE_PK
+          , DEVICE_ID
+     FROM DEVICE
+     WHERE DEVICE_ID = #{deviceId}
+ </select>
 
 
 </mapper>
