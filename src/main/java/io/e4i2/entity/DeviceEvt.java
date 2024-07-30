@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-public class DEVICE_EVT {
+public class DeviceEvt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,15 +17,12 @@ public class DEVICE_EVT {
     private String deviceEvtName;
 
     @Column
-    private Integer deviceId;
+    private Integer devicePk;
 
     @Column
     private String eventName;
 
     @Column
     private String eventTime;
-
-    @Column
-    private String pageTitle;
 
 }

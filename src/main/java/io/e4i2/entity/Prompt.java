@@ -16,7 +16,7 @@ public class Prompt {
     @Column(name = "MBTI")
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
-    @Column(name = "DEFAULT_PROMPT", length = 512)
+    @Column(name = "DEFAULT_PROMPT")
     private String defaultPrompt;
     
 }

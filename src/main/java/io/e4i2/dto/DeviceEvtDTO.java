@@ -6,13 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DeviceEvtDTO {
-
-    private Integer deviceEvtId;
-    private Integer deviceId;
-    private String deviceName;
+    
+    private String deviceId;
     private String eventName;
-    private String eventTime;
-    private String pageTitle;
+    private Integer devicePk;
 
 
 }

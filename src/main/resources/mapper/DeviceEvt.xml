@@ -9,17 +9,17 @@
     <!-- 디바이스별 API 호출시 디바이스명 인서트 -->
     <insert id="insertDevice" parameterType="String" useGeneratedKeys="true" keyProperty="deviceId">
         INSERT INTO DEVICE
-        (DEVICE_NAME)
+        (DEVICE_ID)
         VALUES
-        (#{deviceName})
+        (#{deviceId})
     </insert>
 
     <!-- 디바이스별 API 호출시 디바이스 로그 인서트 -->
     <insert id="insertDeviceEvt" parameterType="io.e4i2.dto.DeviceEvtDTO">
         INSERT INTO  DEVICE_EVT
-        (DEVICE_ID, EVENT_NAME, EVENT_TIME, PAGE_TITLE)
+        (DEVICE_PK, EVENT_NAME, EVENT_TIME)
         VALUES
-        (#{deviceId}, #{eventName}, NOW(), #{pageTitle})
+        (#{devicePk}, #{eventName}, NOW())
     </insert>
 
 
