@@ -1,6 +1,7 @@
 package io.e4i2.controller;
 
 import io.e4i2.dto.DeviceEvtDTO;
+import io.e4i2.dto.ResponseDTO;
 import io.e4i2.service.DeviceEvtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -17,7 +18,7 @@ public class DeviceEvtController {
     private final DeviceEvtService deviceEvtService;
 
     @PostMapping("/evt")
-    public void evt(@Validated @RequestBody DeviceEvtDTO deviceEvtDTO) {
-        deviceEvtService.insertDevice(deviceEvtDTO);
+    public ResponseDTO evt(@Validated @RequestBody DeviceEvtDTO deviceEvtDTO) {
+        return deviceEvtService.insertDevice(deviceEvtDTO);
     }
 }

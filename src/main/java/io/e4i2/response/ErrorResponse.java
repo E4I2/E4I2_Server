@@ -14,7 +14,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ErrorResponse {
     
-    private  final String code;
+    private  final Integer code;
     
     private final String message;
     

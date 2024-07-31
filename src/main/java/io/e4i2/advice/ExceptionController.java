@@ -26,7 +26,7 @@ public class ExceptionController {
         BindingResult bindingResult = e.getBindingResult();
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         
-        ErrorResponse errorResponse = new ErrorResponse(String.valueOf(HttpStatus.BAD_REQUEST.value()), "잘못된 요청입니다.");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "잘못된 요청입니다.");
         
         fieldErrors.forEach(err -> errorResponse.addValidation(err.getField(), err.getDefaultMessage()));
         
@@ -43,7 +43,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(Exception.class)
     public ErrorResponse illegalArgumentExceptionHandler(Exception e) {
-        ErrorResponse errorResponse = new ErrorResponse(String.valueOf(HttpStatus.BAD_REQUEST.value()), e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         errorResponse.addValidation("serverError = ", errorResponse.getMessage());
         return errorResponse;
     }
@@ -51,7 +51,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ErrorResponse jsonExceptionHandler(HttpMessageNotReadableException e) {
-        ErrorResponse errorResponse = new ErrorResponse(String.valueOf(HttpStatus.BAD_REQUEST.value()), "MBTI 값이 올바르지 않습니다.");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "MBTI 값이 올바르지 않습니다.");
         errorResponse.addValidation("mbti","MBTI 값이 올바르지 않습니다.");
         return errorResponse;
     }
