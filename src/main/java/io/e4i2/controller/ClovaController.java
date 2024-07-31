@@ -6,6 +6,7 @@ import io.e4i2.dto.ResponseDTO;
 import io.e4i2.dto.UserMessage;
 import io.e4i2.service.ClovaStudioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ public class ClovaController {
 
 
     @PostMapping("/chat")
-    public ResponseDTO chat(@RequestBody UserMessage userMessage) throws JsonProcessingException {
+    public ResponseDTO chat(@Validated @RequestBody UserMessage userMessage) throws JsonProcessingException {
         
         return clovaStudioService.getResponse(userMessage);
     }
