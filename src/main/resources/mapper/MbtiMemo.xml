@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.e4i2.repository.DeviceEvtDAO">
+
+    <!-- SQL 쿼리를 정의하는 부분 -->
+
+    <!-- 디바이스별 API 호출시 디바이스명 인서트 -->
+    <insert id="insertDevice" parameterType="io.e4i2.dto.DeviceEvtDTO" useGeneratedKeys="true" keyProperty="devicePk">
+        INSERT INTO DEVICE
+            (DEVICE_ID)
+        VALUES
+            (#{deviceId})
+    </insert>
+
+    <!-- 디바이스별 API 호출시 디바이스 로그 인서트 -->
+    <insert id="insertDeviceEvt" parameterType="io.e4i2.dto.DeviceEvtDTO">
+        INSERT INTO DEVICE_EVT
+            (DEVICE_PK, EVENT_NAME, EVENT_TIME)
+        VALUES
+            (#{devicePk}, #{eventName}, NOW())
+    </insert>
+ <select id="duplicationCheck" parameterType="io.e4i2.dto.DeviceEvtDTO" resultType="io.e4i2.dto.DeviceEvtDTO">
+     SELECT DEVICE_PK
+          , DEVICE_ID
+     FROM DEVICE
+     WHERE DEVICE_ID = #{deviceId}
+ </select>
+
+
+</mapper>
