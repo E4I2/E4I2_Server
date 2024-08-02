@@ -1,8 +1,8 @@
 package io.e4i2.controller;
 
 import io.e4i2.dto.MbtiMemoDTO;
+
 import io.e4i2.dto.ResponseDTO;
-import io.e4i2.entity.MbtiMemo;
 import io.e4i2.service.MbtiMemoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;

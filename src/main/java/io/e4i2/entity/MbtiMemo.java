@@ -3,7 +3,6 @@ package io.e4i2.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 @Entity
 @Data

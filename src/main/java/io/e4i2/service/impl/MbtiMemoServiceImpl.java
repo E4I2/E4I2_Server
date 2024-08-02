@@ -2,7 +2,6 @@ package io.e4i2.service.impl;
 
 import io.e4i2.dto.MbtiMemoDTO;
 import io.e4i2.dto.ResponseDTO;
-import io.e4i2.repository.DeviceEvtDAO;
 import io.e4i2.repository.MbtiMemoDAO;
 import io.e4i2.service.MbtiMemoService;
 import jakarta.transaction.Transactional;
