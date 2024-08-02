@@ -22,5 +22,57 @@
         WHERE DEVICE_ID = #{deviceId}
     </select>
 
+    <!-- 디바이스 별 mbti 메모 조회 -->
+    <select id="selectmbtiMemo" resultType="io.e4i2.dto.MbtiMemoDTO" parameterType="io.e4i2.dto.MbtiMemoDTO">
+        SELECT
+            MEMO_ID
+            , MEMO_NAME
+            , MEMO_AGE
+            , MEMO_SEX
+            , MEMO_RELATION
+            , MEMO_INTEREST
+            , MEMO_SUBMIT_DATE
+            , MBTI
+            , DEVICE_ID
+        FROM MBTI_MEMO
+        WHERE DEVICE_ID = #{deviceId}
+        AND MEMO_ID = #{memoId}
+    </select>
+
+    <!-- 디바이스 별 MBTI 메모 목록 조회 -->
+    <select id="selectmbtiMemoList" resultType="io.e4i2.dto.MbtiMemoDTO" parameterType="String">
+        SELECT
+            MEMO_ID
+             , MEMO_NAME
+             , MEMO_AGE
+             , MEMO_SEX
+             , MEMO_RELATION
+             , MEMO_INTEREST
+             , MEMO_SUBMIT_DATE
+             , MBTI
+             , DEVICE_ID
+        FROM MBTI_MEMO
+        WHERE DEVICE_ID = #{deviceId}
+    </select>
+
+
+    <delete id="deletembtiMemo" parameterType="io.e4i2.dto.MbtiMemoDTO">
+        DELETE FROM MBTI_MEMO
+        WHERE DEVICE_ID = #{deviceId}
+        AND MEMO_ID = #{memoId}
+    </delete>
+
+    <update id="updateMbtiMemo" parameterType="io.e4i2.dto.MbtiMemoDTO">
+        UPDATE MBTI_MEMO SET
+            MEMO_NAME = #{memoName}
+            , MEMO_AGE = #{memoAge}
+            , MEMO_SEX = #{memoSex}
+            , MEMO_RELATION = #{memoRelation}
+            , MEMO_INTEREST = #{memoInterest}
+            , MBTI = #{mbti}
+            , MEMO_SUBMIT_DATE = now()
+        WHERE MEMO_ID = #{memoId}
+        AND DEVICE_ID = #{deviceId}
+    </update>
 
 </mapper>

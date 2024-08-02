@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -17,6 +19,8 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
 
     private final MbtiMemoDAO mbtiMemoDAO;
 
+
+    // 메모 저장
     @Override
     public ResponseDTO mbtiMemoInsert(MbtiMemoDTO mbtiMemoDTO) {
 
@@ -39,4 +43,30 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
 //        mbtiMemoDAO.mbtiMemoInsert(mbtiMemoDTO);
 //        return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
     }
+
+    // 메모 상세조회
+    @Override
+    public MbtiMemoDTO selectmbtiMemo(MbtiMemoDTO mbtiMemoDTO) {
+        return mbtiMemoDAO.selectmbtiMemo(mbtiMemoDTO);
+    }
+
+    // 메모 목록 조회
+    @Override
+    public List<MbtiMemoDTO> selectmbtiMemoList(String deviceId) {
+        return mbtiMemoDAO.selectmbtiMemoList(deviceId);
+    }
+
+    @Override
+    public ResponseDTO deletembtiMemo(MbtiMemoDTO mbtiMemoDTO) {
+        mbtiMemoDAO.deletembtiMemo(mbtiMemoDTO);
+        return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
+    }
+
+    @Override
+    public ResponseDTO updateMbtiMemo(MbtiMemoDTO mbtiMemoDTO) {
+        mbtiMemoDAO.updateMbtiMemo(mbtiMemoDTO);
+        return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
+    }
+
+
 }
