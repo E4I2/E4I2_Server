@@ -19,29 +19,12 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
 
     private final MbtiMemoDAO mbtiMemoDAO;
 
-
     // 메모 저장
     @Override
     public ResponseDTO mbtiMemoInsert(MbtiMemoDTO mbtiMemoDTO) {
 
         mbtiMemoDAO.mbtiMemoInsert(mbtiMemoDTO);
         return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
-
-//        MbtiMemoDTO mbtiMemoValue = mbtiMemoDAO.duplicationCheck(mbtiMemoDTO);
-//
-//        if(mbtiMemoValue == null) {
-//            MbtiMemoDTO dto = mbtiMemoDAO.duplicationCheck(mbtiMemoDTO);
-//            mbtiMemoDTO.setDevicePk(dto.getDevicePk());
-//            mbtiMemoDAO.mbtiMemoInsert(mbtiMemoDTO);
-//            return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
-//        }else {
-//            mbtiMemoDTO.setDevicePk(mbtiMemoValue.getDevicePk());
-//            mbtiMemoDAO.mbtiMemoInsert(mbtiMemoDTO);
-//            return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
-//        }
-
-//        mbtiMemoDAO.mbtiMemoInsert(mbtiMemoDTO);
-//        return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
     }
 
     // 메모 상세조회
@@ -50,10 +33,30 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
         return mbtiMemoDAO.selectmbtiMemo(mbtiMemoDTO);
     }
 
+
     // 메모 목록 조회
     @Override
-    public List<MbtiMemoDTO> selectmbtiMemoList(String deviceId) {
-        return mbtiMemoDAO.selectmbtiMemoList(deviceId);
+    public MbtiMemoDTO selectmbtiMemoList(String deviceId) {
+
+        try{
+
+            List<MbtiMemoDTO> list = mbtiMemoDAO.selectmbtiMemoList(deviceId);
+
+            MbtiMemoDTO.Result result = new MbtiMemoDTO.Result();
+            result.setStatus(200);
+            result.setMessage("SUCCESS");
+            result.setCode("success");
+
+            MbtiMemoDTO finalResponseDTO = new MbtiMemoDTO();
+            finalResponseDTO.setData(list);
+            finalResponseDTO.setResult(result);
+
+            return finalResponseDTO;
+
+        }catch (Exception e){
+            log.error("Unexpected error", e);
+            throw new RuntimeException("Unexpected error: " + e.getMessage(), e);
+        }
     }
 
     @Override

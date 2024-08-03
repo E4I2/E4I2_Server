@@ -14,17 +14,17 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/mbtiMemo")
+//@RequestMapping("/mbtiMemo")
 public class MbtiMemoController {
 
     private final MbtiMemoService mbtiMemoService;
 
-    @PostMapping("/create")
+    @PostMapping("/mbtiMemo/create")
     public ResponseDTO mbtiMemoCreate(@Validated @RequestBody MbtiMemoDTO mbtiMemoDTO) {
         return mbtiMemoService.mbtiMemoInsert(mbtiMemoDTO);
     }
 
-    @GetMapping("/{deviceId}/detail/{memoId}")
+    @GetMapping("/mbtiMemo/{deviceId}/detail/{memoId}")
     public MbtiMemoDTO mbtiMemoDetail(@PathVariable("deviceId") String deviceId,
                                       @PathVariable("memoId") int memoId ){
 
@@ -38,14 +38,15 @@ public class MbtiMemoController {
 
     }
 
-    @GetMapping("/{deviceId}")
-    public List<MbtiMemoDTO> selectmbtiMemoList(@PathVariable("deviceId") String deviceId){
-        List<MbtiMemoDTO> memoList = mbtiMemoService.selectmbtiMemoList(deviceId);
+    // 메모 저장 목록 조회
+    @GetMapping("/home/{deviceId}")
+    public MbtiMemoDTO selectmbtiMemoList(@Validated @PathVariable("deviceId") String deviceId){
+        MbtiMemoDTO memoList = mbtiMemoService.selectmbtiMemoList(deviceId);
 
         return memoList;
     }
 
-    @PostMapping("/{deviceId}/delete/{memoId}")
+    @PostMapping("/mbtiMemo/{deviceId}/delete/{memoId}")
     public ResponseDTO deletembtiMemo(@Validated @RequestBody @PathVariable("deviceId") String deviceId,
                                       @PathVariable("memoId") int memoId){
 
@@ -56,8 +57,14 @@ public class MbtiMemoController {
         return mbtiMemoService.deletembtiMemo(mbtiMemoDTO);
     }
 
-    @PostMapping("/{deviceId}/update/{memoId}")
-    public ResponseDTO updateMbtiMemo(@Validated @RequestBody MbtiMemoDTO mbtiMemoDTO){
+    @PostMapping("/mbtiMemo/{deviceId}/update/{memoId}")
+    public ResponseDTO updateMbtiMemo(@Validated @RequestBody MbtiMemoDTO mbtiMemoDTO,
+                                      @PathVariable("memoId") int memoId,
+                                      @PathVariable("deviceId") String deviceId){
+
+        mbtiMemoDTO.setDeviceId(deviceId);
+        mbtiMemoDTO.setMemoId(memoId);
+
         return mbtiMemoService.updateMbtiMemo(mbtiMemoDTO);
     }
 
