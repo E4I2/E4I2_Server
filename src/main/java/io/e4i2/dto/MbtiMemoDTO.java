@@ -5,9 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class MbtiMemoDTO {
+
+    private Result result;
+    private List<MbtiMemoDTO> data;
 
     private int memoId;
 
@@ -35,6 +40,25 @@ public class MbtiMemoDTO {
     private int devicePk;
 
     private String deviceId;
+
+
+    @Getter
+    @Setter
+    public static class Result {
+        private int status;
+        private String message;
+        private String code;
+
+        public Result() {
+        }
+
+        public Result(int status, String message, String code) {
+            this.status = status;
+            this.message = message;
+            this.code = code;
+        }
+
+    }
 
 
 }
