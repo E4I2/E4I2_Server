@@ -23,5 +23,5 @@ public interface MbtiMemoDAO {
 
     // 메모 수정
     void updateMbtiMemo(MbtiMemoDTO mbtiMemoDTO);
-
+ //
 }
