@@ -21,5 +21,6 @@ public enum Mbti {
     ESFJ,
     ENFJ,
     ENTJ,
+    BANNER
     
 }
