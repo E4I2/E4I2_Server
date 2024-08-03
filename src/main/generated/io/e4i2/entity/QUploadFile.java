@@ -25,6 +25,8 @@ public class QUploadFile extends EntityPathBase<UploadFile> {
 
     public final StringPath locationFilename = createString("locationFilename");
 
+    public final EnumPath<Mbti> mbti = createEnum("mbti", Mbti.class);
+
     public final StringPath originalFilename = createString("originalFilename");
 
     public final DateTimePath<java.time.LocalDateTime> uploadTime = createDateTime("uploadTime", java.time.LocalDateTime.class);
