@@ -12,7 +12,7 @@ import java.util.List;
 public class MbtiMemoDTO {
 
     private Result result;
-    private List data;
+    private List<MbtiMemoDTO> data;
 
     private int memoId;
 
