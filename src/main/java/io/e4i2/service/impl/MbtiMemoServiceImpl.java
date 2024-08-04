@@ -58,22 +58,12 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
             List<MbtiMemoData.Memo> mbtiMemos = mbtiMemoDAO.selectmbtiMemoList(deviceId);
             
             if (mbtiMemos == null || mbtiMemos.isEmpty()) {
-                // mbtiMemos가 null이거나 비어 있는 경우 기본 값을 가진 Memo 객체 추가
+                
                 MbtiMemoData.Memo defaultMemo = new MbtiMemoData.Memo();
-                defaultMemo.setMemoId(0);
-                defaultMemo.setMemoName(null);
-                defaultMemo.setMemoAge("null");
-                defaultMemo.setMemoSex("null");
-                defaultMemo.setMemoRelation("null");
-                defaultMemo.setInterest("null");
-                defaultMemo.setMemoSubmitDate("null");
-                defaultMemo.setMbti("null");
-                defaultMemo.setDevicePk(0);
                 defaultMemo.setDeviceId(deviceId);
                 
                 MbtiMemoData.Memo.MbtiInterest defaultInterest = new MbtiMemoData.Memo.MbtiInterest();
                 defaultInterest.setMemoId(0);
-                defaultInterest.setInterest("null");
                 defaultInterest.setInterestId(0);
                 
                 List<MbtiMemoData.Memo.MbtiInterest> defaultInterests = new ArrayList<>();
@@ -87,10 +77,6 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
                     List<MbtiMemoData.Memo.MbtiInterest> interests = mbtiMemoDAO.selectMbtiInterests(memo.getMemoId());
                     if (interests == null || interests.isEmpty()) {
                         MbtiMemoData.Memo.MbtiInterest defaultInterest = new MbtiMemoData.Memo.MbtiInterest();
-                        defaultInterest.setMemoId(0);
-                        defaultInterest.setInterest("null");
-                        defaultInterest.setInterestId(0);
-                        
                         interests = new ArrayList<>();
                         interests.add(defaultInterest);
                     }
