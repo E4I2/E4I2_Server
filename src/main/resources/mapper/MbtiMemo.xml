@@ -43,12 +43,11 @@
             , MEMO_AGE
             , MEMO_SEX
             , MEMO_RELATION
-            , MEMO_INTEREST
             , MEMO_SUBMIT_DATE
             , MBTI
-            , DEVICE_ID
+            , DEVICE_PK
         FROM MBTI_MEMO
-        WHERE DEVICE_ID = #{deviceId}
+        WHERE DEVICE_PK = #{deviceId}
         AND MEMO_ID = #{memoId}
     </select>
 
@@ -60,18 +59,17 @@
              , MEMO_AGE
              , MEMO_SEX
              , MEMO_RELATION
-             , MEMO_INTEREST
              , MEMO_SUBMIT_DATE
              , MBTI
-             , DEVICE_ID
+             , DEVICE_PK
         FROM MBTI_MEMO
-        WHERE DEVICE_ID = #{deviceId}
+        WHERE DEVICE_PK = #{deviceId}
     </select>
 
 
     <delete id="deletembtiMemo" parameterType="io.e4i2.dto.MbtiMemoDTO">
         DELETE FROM MBTI_MEMO
-        WHERE DEVICE_ID = #{deviceId}
+        WHERE DEVICE_PK = #{deviceId}
         AND MEMO_ID = #{memoId}
     </delete>
 
@@ -81,11 +79,10 @@
             , MEMO_AGE = #{memoAge}
             , MEMO_SEX = #{memoSex}
             , MEMO_RELATION = #{memoRelation}
-            , MEMO_INTEREST = #{memoInterest}
             , MBTI = #{mbti}
             , MEMO_SUBMIT_DATE = now()
         WHERE MEMO_ID = #{memoId}
-        AND DEVICE_ID = #{deviceId}
+        AND DEVICE_PK = #{deviceId}
     </update>
 
 </mapper>
