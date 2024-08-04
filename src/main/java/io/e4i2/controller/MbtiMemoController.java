@@ -28,13 +28,13 @@ public class MbtiMemoController {
         //mbti memo 에 insert 하고 memoId를 반환값으로 받아
         int memoId = mbtiMemoService.mbtiMemoInsert(mbtiMemoDTO);
 
-        for (String e : mbtiMemoDTO.getInterests()) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("memoId", mbtiMemoDTO.getMemoId());
-            params.put("interest", e);
-
-            mbtiMemoService.insertMemoInterest(params);
-        }
+//        for (String e : mbtiMemoDTO.getInterests()) {
+//            Map<String, Object> params = new HashMap<>();
+//            params.put("memoId", mbtiMemoDTO.getMemoId());
+//            params.put("interest", e);
+//
+//            mbtiMemoService.insertMemoInterest(params);
+//        }
 
 
         return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
@@ -45,8 +45,8 @@ public class MbtiMemoController {
                                       @PathVariable("memoId") int memoId ){
 
         MbtiMemoDTO mbtiMemoDTO = new MbtiMemoDTO();
-        mbtiMemoDTO.setDeviceId(deviceId);
-        mbtiMemoDTO.setMemoId(memoId);
+     //   mbtiMemoDTO.setDeviceId(deviceId);
+     //   mbtiMemoDTO.setMemoId(memoId);
 
         MbtiMemoDTO memoDto = mbtiMemoService.selectmbtiMemo(mbtiMemoDTO);
 
@@ -67,8 +67,8 @@ public class MbtiMemoController {
                                       @PathVariable("memoId") int memoId){
 
         MbtiMemoDTO mbtiMemoDTO = new MbtiMemoDTO();
-        mbtiMemoDTO.setDeviceId(deviceId);
-        mbtiMemoDTO.setMemoId(memoId);
+    //    mbtiMemoDTO.setDeviceId(deviceId);
+      //  mbtiMemoDTO.setMemoId(memoId);
 
         return mbtiMemoService.deletembtiMemo(mbtiMemoDTO);
     }
@@ -78,8 +78,8 @@ public class MbtiMemoController {
                                       @PathVariable("memoId") int memoId,
                                       @PathVariable("deviceId") String deviceId){
 
-        mbtiMemoDTO.setDeviceId(deviceId);
-        mbtiMemoDTO.setMemoId(memoId);
+        //mbtiMemoDTO.setDeviceId(deviceId);
+        //mbtiMemoDTO.setMemoId(memoId);
 
         return mbtiMemoService.updateMbtiMemo(mbtiMemoDTO);
     }

@@ -1,6 +1,8 @@
 package io.e4i2.service.impl;
 
+import io.e4i2.dto.MbtiMemo;
 import io.e4i2.dto.MbtiMemoDTO;
+import io.e4i2.dto.MbtiMemoData;
 import io.e4i2.dto.ResponseDTO;
 import io.e4i2.repository.MbtiMemoDAO;
 import io.e4i2.service.MbtiMemoService;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +29,10 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
 
         MbtiMemoDTO mbtiMemo = new MbtiMemoDTO();
 
-        String deviceId = mbtiMemoDTO.getDeviceId();
-        mbtiMemo = mbtiMemoDAO.duplicationCheck(deviceId);
+        //String deviceId = mbtiMemoDTO.getDeviceId();
+        //mbtiMemo = mbtiMemoDAO.duplicationCheck(deviceId);
 
-        mbtiMemoDTO.setDevicePk(mbtiMemo.getDevicePk());
+        //mbtiMemoDTO.setDevicePk(mbtiMemo.getDevicePk());
 
 
         return mbtiMemoDAO.mbtiMemoInsert(mbtiMemoDTO);
@@ -52,24 +55,79 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
     public MbtiMemoDTO selectmbtiMemoList(String deviceId) {
 
         try{
-
-            List<MbtiMemoDTO> list = mbtiMemoDAO.selectmbtiMemoList(deviceId);
-
+            List<MbtiMemoData.Memo> mbtiMemos = mbtiMemoDAO.selectmbtiMemoList(deviceId);
+            
+            if (mbtiMemos == null || mbtiMemos.isEmpty()) {
+                // mbtiMemos가 null이거나 비어 있는 경우 기본 값을 가진 Memo 객체 추가
+                MbtiMemoData.Memo defaultMemo = new MbtiMemoData.Memo();
+                defaultMemo.setMemoId(0);
+                defaultMemo.setMemoName(null);
+                defaultMemo.setMemoAge("null");
+                defaultMemo.setMemoSex("null");
+                defaultMemo.setMemoRelation("null");
+                defaultMemo.setInterest("null");
+                defaultMemo.setMemoSubmitDate("null");
+                defaultMemo.setMbti("null");
+                defaultMemo.setDevicePk(0);
+                defaultMemo.setDeviceId(deviceId);
+                
+                MbtiMemoData.Memo.MbtiInterest defaultInterest = new MbtiMemoData.Memo.MbtiInterest();
+                defaultInterest.setMemoId(0);
+                defaultInterest.setInterest("null");
+                defaultInterest.setInterestId(0);
+                
+                List<MbtiMemoData.Memo.MbtiInterest> defaultInterests = new ArrayList<>();
+                defaultInterests.add(defaultInterest);
+                defaultMemo.setMbtiInterests(defaultInterests);
+                
+                mbtiMemos = new ArrayList<>();
+                mbtiMemos.add(defaultMemo);
+            } else {
+                for (MbtiMemoData.Memo memo : mbtiMemos) {
+                    List<MbtiMemoData.Memo.MbtiInterest> interests = mbtiMemoDAO.selectMbtiInterests(memo.getMemoId());
+                    if (interests == null || interests.isEmpty()) {
+                        MbtiMemoData.Memo.MbtiInterest defaultInterest = new MbtiMemoData.Memo.MbtiInterest();
+                        defaultInterest.setMemoId(0);
+                        defaultInterest.setInterest("null");
+                        defaultInterest.setInterestId(0);
+                        
+                        interests = new ArrayList<>();
+                        interests.add(defaultInterest);
+                    }
+                    memo.setMbtiInterests(interests);
+                }
+            }
+            
             MbtiMemoDTO.Result result = new MbtiMemoDTO.Result();
             result.setStatus(200);
             result.setMessage("SUCCESS");
             result.setCode("success");
-
+            
             MbtiMemoDTO finalResponseDTO = new MbtiMemoDTO();
-            finalResponseDTO.setData(list);
+            MbtiMemoData responseData = new MbtiMemoData();
+            responseData.setMemos(mbtiMemos);
+            
+            List<MbtiMemoData.Banner> banners = fetchBanners();
+            responseData.setBanners(banners);
+            
+            finalResponseDTO.setData(responseData);
             finalResponseDTO.setResult(result);
-
+            
             return finalResponseDTO;
-
+            
         }catch (Exception e){
             log.error("Unexpected error", e);
             throw new RuntimeException("Unexpected error: " + e.getMessage(), e);
         }
+    }
+    
+    private List<MbtiMemoData.Banner> fetchBanners() {
+        // Dummy implementation
+        List<MbtiMemoData.Banner> banners = new ArrayList<>();
+        MbtiMemoData.Banner banner = new MbtiMemoData.Banner();
+        banner.setImageUrl("배너 이미지 추가해야함");
+        banners.add(banner);
+        return banners;
     }
 
     @Override
