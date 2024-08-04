@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -21,10 +22,22 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
 
     // 메모 저장
     @Override
-    public ResponseDTO mbtiMemoInsert(MbtiMemoDTO mbtiMemoDTO) {
+    public int mbtiMemoInsert(MbtiMemoDTO mbtiMemoDTO) {
 
-        mbtiMemoDAO.mbtiMemoInsert(mbtiMemoDTO);
-        return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
+        MbtiMemoDTO mbtiMemo = new MbtiMemoDTO();
+
+        String deviceId = mbtiMemoDTO.getDeviceId();
+        mbtiMemo = mbtiMemoDAO.duplicationCheck(deviceId);
+
+        mbtiMemoDTO.setDevicePk(mbtiMemo.getDevicePk());
+
+
+        return mbtiMemoDAO.mbtiMemoInsert(mbtiMemoDTO);
+    }
+
+    @Override
+    public void insertMemoInterest(Map<String, Object> paramMap) {
+        mbtiMemoDAO.insertMemoInterest(paramMap);
     }
 
     // 메모 상세조회
