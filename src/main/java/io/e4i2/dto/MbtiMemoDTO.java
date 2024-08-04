@@ -14,6 +14,8 @@ public class MbtiMemoDTO {
     private Result result;
     private List<MbtiMemoDTO> data;
 
+    private List<String> interests;
+
     private int memoId;
 
     @NotBlank(message = "이름값이 올바르지 않습니다.")
@@ -28,8 +30,8 @@ public class MbtiMemoDTO {
     @NotBlank(message = "관계값이 올바르지 않습니다.")
     private String memoRelation;
 
-    @NotBlank(message = "관심사값이 올바르지 않습니다.")
-    private String memoInterest;
+//    @NotBlank(message = "관심사값이 올바르지 않습니다.")
+    private String interest;
 
     private String memoSubmitDate;
 
@@ -40,6 +42,8 @@ public class MbtiMemoDTO {
     private int devicePk;
 
     private String deviceId;
+
+    private MbtiInterestDTO mbtiInterests;
 
 
     @Getter
@@ -59,6 +63,7 @@ public class MbtiMemoDTO {
         }
 
     }
+
 
 
 }

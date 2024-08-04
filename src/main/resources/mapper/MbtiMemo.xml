@@ -7,13 +7,26 @@
     <!-- SQL 쿼리를 정의하는 부분 -->
 
     <!-- mbti 메모 인서트 -->
-    <insert id="mbtiMemoInsert" parameterType="io.e4i2.dto.MbtiMemoDTO" useGeneratedKeys="true" keyProperty="devicePk">
+    <insert id="mbtiMemoInsert" parameterType="io.e4i2.dto.MbtiMemoDTO" useGeneratedKeys="true" keyProperty="memoId">
         INSERT INTO MBTI_MEMO
-        (MEMO_NAME, MEMO_AGE, MEMO_SEX, MEMO_RELATION, MEMO_INTEREST,MEMO_SUBMIT_DATE, MBTI,DEVICE_ID)
+            (MEMO_NAME, MEMO_AGE, MEMO_SEX, MEMO_RELATION,MEMO_SUBMIT_DATE, MBTI,DEVICE_PK)
         VALUES
-            (#{memoName}, #{memoAge}, #{memoSex}, #{memoRelation}, #{memoInterest},now(), #{mbti},#{deviceId})
+            (#{memoName}, #{memoAge}, #{memoSex}, #{memoRelation},now(), #{mbti},#{devicePk})
     </insert>
 
+    <!-- 메모 관심사 인서트 -->
+    <insert id="insertMemoInterest" parameterType="map">
+        INSERT INTO MBTI_INTEREST
+            (MEMO_ID,INTEREST)
+        VALUES
+            (#{memoId},#{interest})
+    </insert>
+
+    <select id="duplicationInterestCheck" resultType="io.e4i2.dto.MbtiMemoDTO" parameterType="integer">
+        SELECT MEMO_ID FROM MBTI_MEMO
+        WHERE MEMO_ID = #{memoId}
+
+    </select>
 
     <select id="duplicationCheck" parameterType="string" resultType="io.e4i2.dto.MbtiMemoDTO">
         SELECT DEVICE_PK

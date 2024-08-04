@@ -1,5 +1,6 @@
 package io.e4i2.controller;
 
+import io.e4i2.dto.MbtiInterestDTO;
 import io.e4i2.dto.MbtiMemoDTO;
 
 import io.e4i2.dto.ResponseDTO;
@@ -8,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -19,7 +23,21 @@ public class MbtiMemoController {
 
     @PostMapping("/mbtiMemo/create")
     public ResponseDTO mbtiMemoCreate(@Validated @RequestBody MbtiMemoDTO mbtiMemoDTO) {
-        return mbtiMemoService.mbtiMemoInsert(mbtiMemoDTO);
+        MbtiInterestDTO interestDTO;
+
+        //mbti memo 에 insert 하고 memoId를 반환값으로 받아
+        int memoId = mbtiMemoService.mbtiMemoInsert(mbtiMemoDTO);
+
+        for (String e : mbtiMemoDTO.getInterests()) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("memoId", mbtiMemoDTO.getMemoId());
+            params.put("interest", e);
+
+            mbtiMemoService.insertMemoInterest(params);
+        }
+
+
+        return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
     }
 
     @GetMapping("/mbtiMemo/{deviceId}/detail/{memoId}")

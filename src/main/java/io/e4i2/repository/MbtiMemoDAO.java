@@ -1,16 +1,20 @@
 package io.e4i2.repository;
 
+import io.e4i2.dto.MbtiInterestDTO;
 import io.e4i2.dto.MbtiMemoDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface MbtiMemoDAO {
 
-    void mbtiMemoInsert(MbtiMemoDTO mbtiMemoDTO);
+    int mbtiMemoInsert(MbtiMemoDTO mbtiMemoDTO);
 
-    MbtiMemoDTO duplicationCheck(MbtiMemoDTO mbtiMemoDTO);
+    void insertMemoInterest(Map<String, Object> paramMap);
+
+    MbtiMemoDTO duplicationCheck(String deviceId);
 
     // 메모 상세 조회
     MbtiMemoDTO selectmbtiMemo(MbtiMemoDTO mbtiMemoDTO);
