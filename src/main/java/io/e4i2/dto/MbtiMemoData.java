@@ -25,7 +25,7 @@ public class MbtiMemoData {
         private String memoAge;
         private String memoSex;
         private String memoRelation;
-        private String interest;
+        //private String interest;
         private String memoSubmitDate;
         private String mbti;
         private int devicePk;

@@ -3,6 +3,7 @@ package io.e4i2.controller;
 import io.e4i2.dto.MbtiInterestDTO;
 import io.e4i2.dto.MbtiMemoDTO;
 
+import io.e4i2.dto.MbtiMemoData;
 import io.e4i2.dto.ResponseDTO;
 import io.e4i2.service.MbtiMemoService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -22,20 +24,21 @@ public class MbtiMemoController {
     private final MbtiMemoService mbtiMemoService;
 
     @PostMapping("/mbtiMemo/create")
-    public ResponseDTO mbtiMemoCreate(@Validated @RequestBody MbtiMemoDTO mbtiMemoDTO) {
+    public ResponseDTO mbtiMemoCreate(@Validated @RequestBody MbtiMemoData.Memo mbtiMemoData) {
         MbtiInterestDTO interestDTO;
 
         //mbti memo 에 insert 하고 memoId를 반환값으로 받아
-        int memoId = mbtiMemoService.mbtiMemoInsert(mbtiMemoDTO);
+        int memoId = mbtiMemoService.mbtiMemoInsert(mbtiMemoData);
 
-//        for (String e : mbtiMemoDTO.getInterests()) {
-//            Map<String, Object> params = new HashMap<>();
-//            params.put("memoId", mbtiMemoDTO.getMemoId());
-//            params.put("interest", e);
-//
-//            mbtiMemoService.insertMemoInterest(params);
-//        }
+        for (MbtiMemoData.Memo.MbtiInterest e : mbtiMemoData.getMbtiInterests()) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("memoId", mbtiMemoData.getMemoId());
+            System.out.println("3. memoId : " + mbtiMemoData.getMemoId());
 
+            params.put("interest", e.getInterest());
+            System.out.println("4. interest : " + e.getInterest());
+            mbtiMemoService.insertMemoInterest(params);
+        }
 
         return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
     }

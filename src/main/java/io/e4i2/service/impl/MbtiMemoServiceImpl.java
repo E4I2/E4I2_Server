@@ -1,6 +1,5 @@
 package io.e4i2.service.impl;
 
-import io.e4i2.dto.MbtiMemo;
 import io.e4i2.dto.MbtiMemoDTO;
 import io.e4i2.dto.MbtiMemoData;
 import io.e4i2.dto.ResponseDTO;
@@ -25,17 +24,20 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
 
     // 메모 저장
     @Override
-    public int mbtiMemoInsert(MbtiMemoDTO mbtiMemoDTO) {
+    public int mbtiMemoInsert(MbtiMemoData.Memo mbtiMemoData) {
 
-        MbtiMemoDTO mbtiMemo = new MbtiMemoDTO();
+        MbtiMemoData.Memo mbtiMemo = new MbtiMemoData.Memo();
 
-        //String deviceId = mbtiMemoDTO.getDeviceId();
-        //mbtiMemo = mbtiMemoDAO.duplicationCheck(deviceId);
+        String deviceId = mbtiMemoData.getDeviceId();
+        System.out.println("1. deviceId : " + deviceId);
 
-        //mbtiMemoDTO.setDevicePk(mbtiMemo.getDevicePk());
+        mbtiMemo = mbtiMemoDAO.duplicationCheck(deviceId);
+        System.out.println("2. DevicePk : " + mbtiMemo.getDevicePk());
+
+        mbtiMemoData.setDevicePk(mbtiMemo.getDevicePk());
 
 
-        return mbtiMemoDAO.mbtiMemoInsert(mbtiMemoDTO);
+        return mbtiMemoDAO.mbtiMemoInsert(mbtiMemoData);
     }
 
     @Override
