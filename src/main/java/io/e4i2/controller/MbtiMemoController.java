@@ -43,19 +43,19 @@ public class MbtiMemoController {
         return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
     }
 
-    @GetMapping("/mbtiMemo/{deviceId}/detail/{memoId}")
-    public MbtiMemoDTO mbtiMemoDetail(@PathVariable("deviceId") String deviceId,
-                                      @PathVariable("memoId") int memoId ){
-
-        MbtiMemoDTO mbtiMemoDTO = new MbtiMemoDTO();
-     //   mbtiMemoDTO.setDeviceId(deviceId);
-     //   mbtiMemoDTO.setMemoId(memoId);
-
-        MbtiMemoDTO memoDto = mbtiMemoService.selectmbtiMemo(mbtiMemoDTO);
-
-        return memoDto;
-
-    }
+//    @GetMapping("/mbtiMemo/{deviceId}/detail/{memoId}")
+//    public MbtiMemoDTO mbtiMemoDetail(@PathVariable("deviceId") String deviceId,
+//                                      @PathVariable("memoId") int memoId ){
+//
+//        MbtiMemoDTO mbtiMemoDTO = new MbtiMemoDTO();
+//     //   mbtiMemoDTO.setDeviceId(deviceId);
+//     //   mbtiMemoDTO.setMemoId(memoId);
+//
+//        MbtiMemoDTO memoDto = mbtiMemoService.selectmbtiMemo(mbtiMemoDTO);
+//
+//        return memoDto;
+//
+//    }
 
     // 메모 저장 목록 조회
     @GetMapping("/home/{deviceId}")
@@ -69,23 +69,27 @@ public class MbtiMemoController {
     public ResponseDTO deletembtiMemo(@Validated @RequestBody @PathVariable("deviceId") String deviceId,
                                       @PathVariable("memoId") int memoId){
 
-        MbtiMemoDTO mbtiMemoDTO = new MbtiMemoDTO();
-    //    mbtiMemoDTO.setDeviceId(deviceId);
-      //  mbtiMemoDTO.setMemoId(memoId);
+//        MbtiMemoDTO mbtiMemoDTO = new MbtiMemoDTO();
+//        mbtiMemoDTO.setDeviceId(deviceId);
+//        mbtiMemoDTO.setMemoId(memoId);
 
-        return mbtiMemoService.deletembtiMemo(mbtiMemoDTO);
+        MbtiMemoData.Memo mbtiMemoData = new MbtiMemoData.Memo();
+        mbtiMemoData.setMemoId(memoId);
+        mbtiMemoData.setMbti(deviceId);
+
+        return mbtiMemoService.deletembtiMemo(mbtiMemoData);
     }
 
-    @PostMapping("/mbtiMemo/{deviceId}/update/{memoId}")
-    public ResponseDTO updateMbtiMemo(@Validated @RequestBody MbtiMemoDTO mbtiMemoDTO,
-                                      @PathVariable("memoId") int memoId,
-                                      @PathVariable("deviceId") String deviceId){
-
-        //mbtiMemoDTO.setDeviceId(deviceId);
-        //mbtiMemoDTO.setMemoId(memoId);
-
-        return mbtiMemoService.updateMbtiMemo(mbtiMemoDTO);
-    }
+//    @PostMapping("/mbtiMemo/{deviceId}/update/{memoId}")
+//    public ResponseDTO updateMbtiMemo(@Validated @RequestBody MbtiMemoDTO mbtiMemoDTO,
+//                                      @PathVariable("memoId") int memoId,
+//                                      @PathVariable("deviceId") String deviceId){
+//
+//        //mbtiMemoDTO.setDeviceId(deviceId);
+//        //mbtiMemoDTO.setMemoId(memoId);
+//
+//        return mbtiMemoService.updateMbtiMemo(mbtiMemoDTO);
+//    }
 
 
 }
