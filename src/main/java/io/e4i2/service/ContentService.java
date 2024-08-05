@@ -7,4 +7,5 @@ public interface ContentService {
     
     
     ContentDTO getContentResponse(ContentRequest contentRequest);
+    ContentDTO getContentPrompt(ContentRequest contentRequest);
 }

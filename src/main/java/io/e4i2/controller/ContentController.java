@@ -20,6 +20,10 @@ public class ContentController {
     
     @GetMapping
     public ContentDTO content(@Validated @RequestBody ContentRequest contentRequest) {
-        return contentService.getContentResponse(contentRequest);
+        if (contentRequest.getContentId() >= 10) {
+            return contentService.getContentPrompt(contentRequest);
+        }else {
+            return contentService.getContentResponse(contentRequest);
+        }
     }
 }

@@ -14,7 +14,7 @@ public class ContentPrompt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer contentPromptId;
     @Column(name = "CONTENT_PROMPT")
-    private String contentPromptTitle;
+    private String contentPrompt;
     @Column(name = "CONTENT_TYPE")
     private String contentType;
 }
