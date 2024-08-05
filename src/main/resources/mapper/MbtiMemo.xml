@@ -8,7 +8,7 @@
 
     <!-- mbti 메모 인서트 -->
     <insert id="mbtiMemoInsert" parameterType="io.e4i2.dto.MbtiMemoData$Memo" useGeneratedKeys="true" keyProperty="memoId">
-        INSERT INTO MBTI_MEMO
+        INSERT INTO mbti_memo
             (MEMO_NAME, MEMO_AGE, MEMO_SEX, MEMO_RELATION,MEMO_SUBMIT_DATE, MBTI,DEVICE_PK)
         VALUES
             (#{memoName}, #{memoAge}, #{memoSex}, #{memoRelation},now(), #{mbti},#{devicePk})
@@ -16,7 +16,7 @@
 
     <!-- 메모 관심사 인서트 -->
     <insert id="insertMemoInterest" parameterType="map">
-        INSERT INTO MBTI_INTEREST
+        INSERT INTO mbti_interest
             (MEMO_ID,INTEREST)
         VALUES
             (#{memoId},#{interest})
@@ -25,7 +25,7 @@
     <select id="duplicationCheck" parameterType="string" resultType="io.e4i2.dto.MbtiMemoData$Memo">
         SELECT DEVICE_PK
              , DEVICE_ID
-        FROM DEVICE
+        FROM device
         WHERE DEVICE_ID = #{deviceId}
     </select>
 
@@ -40,7 +40,7 @@
             , MEMO_SUBMIT_DATE
             , MBTI
             , DEVICE_PK
-        FROM MBTI_MEMO
+        FROM mbti_memo
         WHERE DEVICE_PK = #{deviceId}
         AND MEMO_ID = #{memoId}
     </select>
@@ -58,25 +58,25 @@
                B.MEMO_RELATION,
                B.MEMO_SUBMIT_DATE,
                B.MBTI
-        FROM DEVICE A
-                  JOIN MBTI_MEMO B ON A.DEVICE_PK = B.DEVICE_PK
+        FROM device A
+                  JOIN mbti_memo B ON A.DEVICE_PK = B.DEVICE_PK
         WHERE A.DEVICE_ID = #{deviceId}
     </select>
     <select id="selectMbtiInterests" parameterType="int" resultType="io.e4i2.dto.MbtiMemoData$Memo$MbtiInterest">
         SELECT MEMO_ID, INTEREST, INTEREST_ID
-        FROM MBTI_INTEREST
+        FROM mbti_interest
         WHERE MEMO_ID = #{memoId}
     </select>
 
 
     <delete id="deletembtiMemo" parameterType="io.e4i2.dto.MbtiMemoDTO">
-        DELETE FROM MBTI_MEMO
+        DELETE FROM mbti_memo
         WHERE DEVICE_PK = #{deviceId}
         AND MEMO_ID = #{memoId}
     </delete>
 
     <update id="updateMbtiMemo" parameterType="io.e4i2.dto.MbtiMemoDTO">
-        UPDATE MBTI_MEMO SET
+        UPDATE mbti_memo SET
             MEMO_NAME = #{memoName}
             , MEMO_AGE = #{memoAge}
             , MEMO_SEX = #{memoSex}

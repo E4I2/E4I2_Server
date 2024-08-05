@@ -7,6 +7,7 @@ import io.e4i2.service.ChattingRoomService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +18,8 @@ public class ChattingController {
     
     private final ChattingRoomService chattingRoomService;
     
-    @PostMapping("/")
-    public ChattingRoomDTO save(ChattingRoomCreate chattingRoomCreate) {
+    @PostMapping("/save")
+    public ChattingRoomDTO.Response save(@RequestBody ChattingRoomCreate chattingRoomCreate) {
         return chattingRoomService.createChattingRoom(chattingRoomCreate);
     }
     

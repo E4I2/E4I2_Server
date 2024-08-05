@@ -5,5 +5,7 @@ import lombok.Data;
 @Data
 public class ChattingRoomCreate {
     
-    private Integer devicePk;
+    private String deviceName;
+    
+    
 }
