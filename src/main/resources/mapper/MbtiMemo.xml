@@ -11,7 +11,7 @@
         INSERT INTO mbti_memo
             (MEMO_NAME, MEMO_AGE, MEMO_SEX, MEMO_RELATION,MEMO_SUBMIT_DATE, MBTI,DEVICE_PK)
         VALUES
-            (#{memoName}, #{memoAge}, #{memoSex}, #{memoRelation},now(), #{mbti},#{devicePk})
+            (#{name}, #{age}, #{sex}, #{relation},now(), #{mbti},#{devicePk})
     </insert>
 
     <!-- 메모 관심사 인서트 -->

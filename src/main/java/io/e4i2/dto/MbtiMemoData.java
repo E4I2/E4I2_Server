@@ -2,6 +2,7 @@ package io.e4i2.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.List;
 
@@ -18,22 +19,22 @@ public class MbtiMemoData {
     public static class Banner {
         private String imageUrl;
     }
-    
+
     @Getter
     @Setter
     public static class Memo {
         private int memoId;
-        private String memoName;
-        private String memoAge;
-        private String memoSex;
-        private String memoRelation;
-        private String interest;
+        private String name;
+        private String age;
+        private String sex;
+        private String relation;
+        //private String interest;
         private String memoSubmitDate;
         private String mbti;
         private String profileImageUrl;
         private int devicePk;
         private String deviceId;
-        private List<MbtiInterest> mbtiInterests;
+        private List<String> Interest;
         @Getter
         @Setter
         public static class MbtiInterest {
