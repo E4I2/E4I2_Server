@@ -1,5 +1,6 @@
 package io.e4i2.service.impl;
 
+import io.e4i2.dto.MbtiMemo;
 import io.e4i2.dto.MbtiMemoDTO;
 import io.e4i2.dto.MbtiMemoData;
 import io.e4i2.dto.ResponseDTO;
@@ -58,33 +59,34 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
 
         try{
             List<MbtiMemoData.Memo> mbtiMemos = mbtiMemoDAO.selectmbtiMemoList(deviceId);
-            
-            if (mbtiMemos == null || mbtiMemos.isEmpty()) {
-                
-                MbtiMemoData.Memo defaultMemo = new MbtiMemoData.Memo();
-                defaultMemo.setDeviceId(deviceId);
-                
-                MbtiMemoData.Memo.MbtiInterest defaultInterest = new MbtiMemoData.Memo.MbtiInterest();
-                defaultInterest.setMemoId(0);
-                defaultInterest.setInterestId(0);
-                
-                List<MbtiMemoData.Memo.MbtiInterest> defaultInterests = new ArrayList<>();
-                defaultInterests.add(defaultInterest);
-                defaultMemo.setMbtiInterests(defaultInterests);
-                
-                mbtiMemos = new ArrayList<>();
-                mbtiMemos.add(defaultMemo);
-            } else {
-                for (MbtiMemoData.Memo memo : mbtiMemos) {
-                    List<MbtiMemoData.Memo.MbtiInterest> interests = mbtiMemoDAO.selectMbtiInterests(memo.getMemoId());
-                    if (interests == null || interests.isEmpty()) {
-                        MbtiMemoData.Memo.MbtiInterest defaultInterest = new MbtiMemoData.Memo.MbtiInterest();
-                        interests = new ArrayList<>();
-                        interests.add(defaultInterest);
-                    }
-                    memo.setMbtiInterests(interests);
-                }
-            }
+//            List<MbtiMemoData.Memo> mbtiMemos = mbtiMemoDAO.selectmbtiMemoList(deviceId);
+//
+//            if (mbtiMemos == null || mbtiMemos.isEmpty()) {
+//
+//                MbtiMemoData.Memo defaultMemo = new MbtiMemoData.Memo();
+//                defaultMemo.setDeviceId(deviceId);
+//
+//                MbtiMemoData.Memo.MbtiInterest defaultInterest = new MbtiMemoData.Memo.MbtiInterest();
+//                defaultInterest.setMemoId(0);
+//                defaultInterest.setInterestId(0);
+//
+//                List<MbtiMemoData.Memo.MbtiInterest> defaultInterests = new ArrayList<>();
+//                defaultInterests.add(defaultInterest);
+//                defaultMemo.setMbtiInterests(defaultInterests);
+//
+//                mbtiMemos = new ArrayList<>();
+//                mbtiMemos.add(defaultMemo);
+//            } else {
+//                for (MbtiMemoData.Memo memo : mbtiMemos) {
+//                    List<MbtiMemoData.Memo.MbtiInterest> interests = mbtiMemoDAO.selectMbtiInterests(memo.getMemoId());
+//                    if (interests == null || interests.isEmpty()) {
+//                        MbtiMemoData.Memo.MbtiInterest defaultInterest = new MbtiMemoData.Memo.MbtiInterest();
+//                        interests = new ArrayList<>();
+//                        interests.add(defaultInterest);
+//                    }
+//                    memo.setMbtiInterests(interests);
+//                }
+//            }
             
             MbtiMemoDTO.Result result = new MbtiMemoDTO.Result();
             result.setStatus(200);
@@ -97,7 +99,9 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
             
             List<MbtiMemoData.Banner> banners = fetchBanners();
             responseData.setBanners(banners);
-            
+
+
+
             finalResponseDTO.setData(responseData);
             finalResponseDTO.setResult(result);
             
@@ -119,8 +123,14 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
     }
 
     @Override
-    public ResponseDTO deletembtiMemo(MbtiMemoDTO mbtiMemoDTO) {
-        mbtiMemoDAO.deletembtiMemo(mbtiMemoDTO);
+    public ResponseDTO deletembtiMemo(MbtiMemoData.Memo mbtiMemoData) {
+        MbtiMemoData.Memo mbtiMemo = new MbtiMemoData.Memo();
+
+        String deviceId = mbtiMemoData.getDeviceId();
+        mbtiMemo = mbtiMemoDAO.duplicationCheck(deviceId);
+
+        mbtiMemoData.setDevicePk(mbtiMemo.getDevicePk());
+        mbtiMemoDAO.deletembtiMemo(mbtiMemoData);
         return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
     }
 

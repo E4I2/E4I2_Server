@@ -10,7 +10,9 @@ import java.util.List;
 public class MbtiMemoData {
     private List<Banner> banners;
     private List<Memo> memos;
-    
+
+
+
     @Getter
     @Setter
     public static class Banner {
@@ -25,9 +27,10 @@ public class MbtiMemoData {
         private String memoAge;
         private String memoSex;
         private String memoRelation;
-        //private String interest;
+        private String interest;
         private String memoSubmitDate;
         private String mbti;
+        private String profileImageUrl;
         private int devicePk;
         private String deviceId;
         private List<MbtiInterest> mbtiInterests;
