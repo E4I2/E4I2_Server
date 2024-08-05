@@ -17,8 +17,10 @@ public class Content {
     private String title;
     @Column(name = "CONTENT_TITLE")
     private String contentTitle;
-    @Column(name = "description")
+    @Column(name = "DESCRIPTION")
     private String description;
-    @Column(name = "thumbnail")
+    @Column(name = "THUMBNAIL")
     private String thumbnail;
+    @Column(name = "IMAGE_URL")
+    private String imageUrl; // 추가된 필드
 }

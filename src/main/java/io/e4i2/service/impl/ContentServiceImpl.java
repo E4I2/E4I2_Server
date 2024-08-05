@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.e4i2.dto.ContentDTO;
 import io.e4i2.entity.Content;
 import io.e4i2.entity.ContentPrompt;
+import io.e4i2.entity.QContentPrompt;
 import io.e4i2.repository.ContentPromptRepository;
 import io.e4i2.repository.ContentRepository;
 import io.e4i2.request.ContentRequest;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,20 +53,28 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public ContentDTO getContentResponse(ContentRequest contentRequest) {
         Content content = contentRepository.findById(contentRequest.getContentId()).get();
-        return new ContentDTO(200, "SUCCESS", "success", content.getThumbnail(), content.getContentTitle(), content.getTitle(), content.getDescription());
+        return new ContentDTO(
+                200,
+                "SUCCESS",
+                "success",
+                content.getThumbnail(),
+                content.getContentTitle(),
+                content.getTitle(),
+                content.getDescription(),
+                content.getImageUrl(), // 추가된 필드
+                content.getContentId() // 추가된 필드
+        );
     }
     
     @Override
     public ContentDTO getContentPrompt(ContentRequest contentRequest) {
-        // 1. ContentPrompt에서 contentPrompt를 가져옵니다.
         ContentPrompt findByContentPrompt = contentPromptRepository.findById(contentRequest.getContentId())
                 .orElseThrow(() -> new RuntimeException("ContentPrompt not found"));
         String contentPrompt = findByContentPrompt.getContentPrompt();
         
-        // 2. 클로바 스튜디오 API에 요청을 보냅니다.
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = setHeader();
-        Map<String, Object> requestBody = getRequestBody(contentPrompt);
+        Map<String, Object> requestBody = getRequestBody(contentRequest, contentPrompt);
         
         try {
             String jsonRequestBody = objectMapper.writeValueAsString(requestBody);
@@ -73,8 +83,7 @@ public class ContentServiceImpl implements ContentService {
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, entity, String.class);
             String responseBody = response.getBody();
             
-            // 3. API 응답을 받아서 ContentDTO 객체를 생성합니다.
-            return parseResponse(responseBody);
+            return parseResponse(responseBody,contentRequest);
             
         } catch (Exception e) {
             
@@ -91,28 +100,39 @@ public class ContentServiceImpl implements ContentService {
         return headers;
     }
     
-    private Map<String, Object> getRequestBody(String contentPrompt) {
+    private Map<String, Object> getRequestBody(ContentRequest contentRequest, String contentPrompt) {
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("messages", List.of(
-                Map.of("role", "user", "content", contentPrompt)
-        ));
+        List<Map<String, String>> messages = new ArrayList<>();
+        
+        String systemPrompt = String.format(
+                "User information: MBTI: %s, Name: %s, Age: %s, Sex: %s, Relation: %s, Interests: %s. Give a detailed response based on this information.",
+                contentRequest.getMbti(), contentRequest.getName(), contentRequest.getAge(), contentRequest.getSex(),
+                contentRequest.getRelation(), String.join(", ", contentRequest.getInterest())
+        );
+        
+        messages.add(Map.of("role", "system", "content", systemPrompt));
+        messages.add(Map.of("role", "user", "content", contentPrompt));
+        
+        requestBody.put("messages", messages);
         requestBody.put("maxTokens", 256);
         requestBody.put("temperature", 0.7);
+        requestBody.put("topP", 0.8);
+        requestBody.put("topK", 0);
+        requestBody.put("repeatPenalty", 5.0);
+        requestBody.put("includeAiFilters", true);
+        requestBody.put("seed", 0);
+        
         return requestBody;
     }
-    
-    private ContentDTO parseResponse(String responseBody) throws Exception {
+    private ContentDTO parseResponse(String responseBody, ContentRequest contentRequest) throws Exception {
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         
         // JSON 응답에서 필요한 데이터 추출
-
         
-        // JSON 응답에서 필요한 데이터 추출
-        String thumbnail = jsonNode.path("data").path("thumbnail").asText();
-        String contentTitle = jsonNode.path("data").path("contentTitle").asText();
-        String title = jsonNode.path("data").path("title").asText();
+        ContentPrompt contentPrompt = contentPromptRepository.findById(contentRequest.getContentId()).get();
+
         String description =  jsonNode.path("result").path("message").path("content").asText();
         
-        return new ContentDTO(200, "SUCCESS", "success", thumbnail, contentTitle, title, description);
+        return new ContentDTO(200, "SUCCESS", "success", contentPrompt.getThumbnail(), contentPrompt.getContentTitle(), contentPrompt.getTitle(), description);
     }
 }

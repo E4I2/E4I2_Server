@@ -17,4 +17,11 @@ public class ContentPrompt {
     private String contentPrompt;
     @Column(name = "CONTENT_TYPE")
     private String contentType;
+    @Column(name = "CONTENT_TITLE")
+    private String contentTitle;
+    @Column(name = "THUMBNAIL")
+    private String thumbnail;
+    @Column(name = "TITLE")
+    private String title;
+    
 }
