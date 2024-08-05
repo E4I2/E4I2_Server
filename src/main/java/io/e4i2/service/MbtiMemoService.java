@@ -19,7 +19,7 @@ public interface MbtiMemoService {
 
     MbtiMemoDTO selectmbtiMemoList(String deviceId);
 
-    ResponseDTO deletembtiMemo(MbtiMemoDTO mbtiMemoDTO);
+    ResponseDTO deletembtiMemo(MbtiMemoData.Memo mbtiMemoData);
 
     ResponseDTO updateMbtiMemo(MbtiMemoDTO mbtiMemoDTO);
 

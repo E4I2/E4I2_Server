@@ -24,11 +24,11 @@ public interface MbtiMemoDAO {
     List<MbtiMemoData.Memo> selectmbtiMemoList(String devicePk);
 
     // 메모 삭제
-    void deletembtiMemo(MbtiMemoDTO mbtiMemoDTO);
+    void deletembtiMemo(MbtiMemoData.Memo mbtiMemoData);
 
     // 메모 수정
     void updateMbtiMemo(MbtiMemoDTO mbtiMemoDTO);
     
     List<MbtiMemoData.Memo.MbtiInterest> selectMbtiInterests(int memoId);
-    //
+
 }

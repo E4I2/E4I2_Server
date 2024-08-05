@@ -57,9 +57,23 @@
                B.MEMO_SEX,
                B.MEMO_RELATION,
                B.MEMO_SUBMIT_DATE,
-               B.MBTI
+               B.MBTI,
+               C.code_value AS INTEREST,
+               E.file_url AS profileImageUrl
         FROM device A
-                  JOIN mbti_memo B ON A.DEVICE_PK = B.DEVICE_PK
+        JOIN mbti_memo B ON A.DEVICE_PK = B.DEVICE_PK
+        LEFT JOIN (
+            SELECT a.MEMO_ID, b.code_value
+            FROM mbti_interest a
+                     INNER JOIN code_data b ON a.INTEREST = b.code_value
+            WHERE b.code_id = (
+                SELECT MIN(b2.code_id)
+                FROM mbti_interest a2
+                         INNER JOIN code_data b2 ON a2.INTEREST = b2.code_value
+                WHERE a2.MEMO_ID = a.MEMO_ID
+            )
+        ) C ON B.MEMO_ID = C.MEMO_ID
+        LEFT JOIN upload_file E ON B.MBTI = E.mbti
         WHERE A.DEVICE_ID = #{deviceId}
     </select>
     <select id="selectMbtiInterests" parameterType="int" resultType="io.e4i2.dto.MbtiMemoData$Memo$MbtiInterest">
@@ -71,7 +85,7 @@
 
     <delete id="deletembtiMemo" parameterType="io.e4i2.dto.MbtiMemoDTO">
         DELETE FROM mbti_memo
-        WHERE DEVICE_PK = #{deviceId}
+        WHERE DEVICE_PK = #{devicePk}
         AND MEMO_ID = #{memoId}
     </delete>
 
