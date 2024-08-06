@@ -61,7 +61,6 @@ public class ContentServiceImpl implements ContentService {
                 content.getContentTitle(),
                 content.getTitle(),
                 content.getDescription(),
-                content.getImageUrl(), // 추가된 필드
                 content.getContentId() // 추가된 필드
         );
     }
@@ -130,9 +129,23 @@ public class ContentServiceImpl implements ContentService {
         // JSON 응답에서 필요한 데이터 추출
         
         ContentPrompt contentPrompt = contentPromptRepository.findById(contentRequest.getContentId()).get();
-
-        String description =  jsonNode.path("result").path("message").path("content").asText();
         
-        return new ContentDTO(200, "SUCCESS", "success", contentPrompt.getThumbnail(), contentPrompt.getContentTitle(), contentPrompt.getTitle(), description);
+        String description = jsonNode.path("result").path("message").path("content").asText();
+        String titlePrefix = "제목 :";
+        String title = "";
+        String contentWithoutTitle = description; // 내용에서 제목 부분을 제거한 텍스트
+        
+        if (description.startsWith(titlePrefix)) {
+            int endOfTitleIndex = description.indexOf("\n", titlePrefix.length());
+            if (endOfTitleIndex != -1) {
+                title = description.substring(titlePrefix.length(), endOfTitleIndex).trim();
+                contentWithoutTitle = description.substring(endOfTitleIndex + 1).trim(); // 제목 이후 부분만 남김
+            } else {
+                title = description.substring(titlePrefix.length()).trim();
+                contentWithoutTitle = ""; // 제목만 있고 내용이 없으면 빈 문자열로 설정
+            }
+        }
+        
+        return new ContentDTO(200, "SUCCESS", "success", contentPrompt.getThumbnail(), contentPrompt.getContentTitle(), title.isEmpty() ? "방금까지 나눈 대화로 온도를 측정했어요!" : title, contentWithoutTitle, contentRequest.getContentId());
     }
 }

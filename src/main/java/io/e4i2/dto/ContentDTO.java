@@ -26,11 +26,10 @@ public class ContentDTO {
         private String contentTitle;
         private String title;
         private String description;
-        private String imageUrl; // 추가된 필드
         private Integer contentId; // 추가된 필드
     }
     
-    public ContentDTO(int status, String message, String code, String thumbnail, String contentTitle, String title, String description, String imageUrl, Integer contentId) {
+    public ContentDTO(int status, String message, String code, String thumbnail, String contentTitle, String title, String description, Integer contentId) {
         this.result = new Result();
         this.result.setStatus(status);
         this.result.setMessage(message);
@@ -41,7 +40,7 @@ public class ContentDTO {
         this.data.setContentTitle(contentTitle);
         this.data.setTitle(title);
         this.data.setDescription(description);
-        this.data.setImageUrl(imageUrl); // 추가된 필드 설정
+        //this.data.setImageUrl(imageUrl); // 추가된 필드 설정
         this.data.setContentId(contentId); // 추가된 필드 설정
     }
     public ContentDTO(int status, String message, String code, String thumbnail, String contentTitle, String title, String description) {
