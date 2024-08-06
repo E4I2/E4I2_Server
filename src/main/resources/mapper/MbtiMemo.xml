@@ -46,19 +46,19 @@
     </select>
 
     <!-- 디바이스 별 MBTI 메모 목록 조회 -->
-    <select id="selectmbtiMemoList" resultType="io.e4i2.dto.MbtiMemoData$Memo" parameterType="String">
+    <select id="selectmbtiMemoList" resultType="io.e4i2.dto.MbtiMemoResponseDTO$Memo" parameterType="String">
 
         SELECT A.DEVICE_PK,
                A.DEVICE_ID,
                B.MEMO_ID,
                B.DEVICE_PK,
-               B.MEMO_NAME,
-               B.MEMO_AGE,
-               B.MEMO_SEX,
-               B.MEMO_RELATION,
+               B.MEMO_NAME ,
+               B.MEMO_AGE ,
+               B.MEMO_SEX ,
+               B.MEMO_RELATION ,
                B.MEMO_SUBMIT_DATE,
                B.MBTI,
-               C.code_value AS INTEREST,
+               C.code_value AS interest,
                E.file_url AS profileImageUrl
         FROM device A
         JOIN mbti_memo B ON A.DEVICE_PK = B.DEVICE_PK

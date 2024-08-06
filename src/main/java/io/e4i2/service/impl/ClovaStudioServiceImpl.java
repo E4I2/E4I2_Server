@@ -124,7 +124,10 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
     private ResponseDTO basicMessage(Mbti mbti) {
         ResponseDTO.Result result = new ResponseDTO.Result();
         RestTemplate restTemplate = new RestTemplate();
-        
+
+        // 이따 여기 수정 
+        // 파라미터 추가 (메모 저장 목록 동일하게)
+        // 
         QPrompt qPrompt = QPrompt.prompt;
         Prompt prompt = queryFactory
                 .selectFrom(qPrompt)

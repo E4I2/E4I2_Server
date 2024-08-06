@@ -1,9 +1,6 @@
 package io.e4i2.service.impl;
 
-import io.e4i2.dto.MbtiMemo;
-import io.e4i2.dto.MbtiMemoDTO;
-import io.e4i2.dto.MbtiMemoData;
-import io.e4i2.dto.ResponseDTO;
+import io.e4i2.dto.*;
 import io.e4i2.repository.MbtiMemoDAO;
 import io.e4i2.service.MbtiMemoService;
 import jakarta.transaction.Transactional;
@@ -38,7 +35,9 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
         mbtiMemoData.setDevicePk(mbtiMemo.getDevicePk());
 
 
-        return mbtiMemoDAO.mbtiMemoInsert(mbtiMemoData);
+        mbtiMemoDAO.mbtiMemoInsert(mbtiMemoData);
+
+        return mbtiMemoData.getMemoId();
     }
 
     @Override
@@ -58,7 +57,7 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
     public MbtiMemoDTO selectmbtiMemoList(String deviceId) {
 
         try{
-            List<MbtiMemoData.Memo> mbtiMemos = mbtiMemoDAO.selectmbtiMemoList(deviceId);
+            List<MbtiMemoResponseDTO.Memo> mbtiMemos = mbtiMemoDAO.selectmbtiMemoList(deviceId);
 //            List<MbtiMemoData.Memo> mbtiMemos = mbtiMemoDAO.selectmbtiMemoList(deviceId);
 //
 //            if (mbtiMemos == null || mbtiMemos.isEmpty()) {
@@ -94,10 +93,11 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
             result.setCode("success");
             
             MbtiMemoDTO finalResponseDTO = new MbtiMemoDTO();
-            MbtiMemoData responseData = new MbtiMemoData();
+            //MbtiMemoData responseData = new MbtiMemoData();
+            MbtiMemoResponseDTO responseData = new MbtiMemoResponseDTO();
             responseData.setMemos(mbtiMemos);
             
-            List<MbtiMemoData.Banner> banners = fetchBanners();
+            List<MbtiMemoResponseDTO.Banner> banners = fetchBanners();
             responseData.setBanners(banners);
 
 
@@ -113,10 +113,10 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
         }
     }
     
-    private List<MbtiMemoData.Banner> fetchBanners() {
+    private List<MbtiMemoResponseDTO.Banner> fetchBanners() {
         // Dummy implementation
-        List<MbtiMemoData.Banner> banners = new ArrayList<>();
-        MbtiMemoData.Banner banner = new MbtiMemoData.Banner();
+        List<MbtiMemoResponseDTO.Banner> banners = new ArrayList<>();
+        MbtiMemoResponseDTO.Banner banner = new MbtiMemoResponseDTO.Banner();
         banner.setImageUrl("배너 이미지 추가해야함");
         banners.add(banner);
         return banners;
