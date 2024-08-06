@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -144,6 +146,30 @@ public class ContentServiceImpl implements ContentService {
                 title = description.substring(titlePrefix.length()).trim();
                 contentWithoutTitle = ""; // 제목만 있고 내용이 없으면 빈 문자열로 설정
             }
+        }
+        // 온도에 따른 메시지 추가
+        if (contentRequest.getContentId() == 11) {
+            // 온도 추출
+            Pattern pattern = Pattern.compile("(\\d+)도");
+            Matcher matcher = pattern.matcher(description);
+            int temperature = 0;
+            if (matcher.find()) {
+                temperature = Integer.parseInt(matcher.group(1));
+            }
+            
+            // 온도에 따른 메시지 추가
+            String additionalMessage = "";
+            if (temperature <= 0) {
+                additionalMessage = "공곰 얼 것만 같은 대화.. 이 추위를 녹일 불씨 같은 팁이 필요하다면, 대화 주제 혹은 대화 꿀팁 기능을 이용해보세요!";
+            } else if (temperature > 0 && temperature < 36) {
+                additionalMessage = "약간 싸늘한 온도네요! 조금 더 대화를 나눠볼까요? 온도를 높이고 싶다면, 대화 주제 혹은 대화 꿀팁 기능을 통해 팁을 얻어보도 좋아요~";
+            } else if (temperature >= 36) {
+                additionalMessage = "따뜻하고 후끈후끈한 대화예요! 참 잘하고 있어요~ 더 잘하고 싶다면, 대화 주제 혹은 대화 꿀팁 기능을 활용해보세요!";
+            }
+            
+            // 기존 설명에 추가 메시지 붙이기
+            contentWithoutTitle += "\n\n" + additionalMessage;
+            return new ContentDTO(200, "SUCCESS", "success", contentPrompt.getThumbnail(), contentPrompt.getContentTitle(), title.isEmpty() ? "방금까지 나눈 대화로 온도를 측정했어요!" : title, contentWithoutTitle, contentRequest.getContentId());
         }
         
         return new ContentDTO(200, "SUCCESS", "success", contentPrompt.getThumbnail(), contentPrompt.getContentTitle(), title.isEmpty() ? "방금까지 나눈 대화로 온도를 측정했어요!" : title, contentWithoutTitle, contentRequest.getContentId());
