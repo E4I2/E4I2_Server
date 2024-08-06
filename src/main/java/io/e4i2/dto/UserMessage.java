@@ -13,5 +13,11 @@ public class UserMessage {
     private String message;
     @ValidEnum(enumClass = Mbti.class , message = "MBTI 값이 올바르지 않습니다.")
     private Mbti mbti;
+
+    private String name;
+    private String age;
+    private String sex;
+    private String relation;
+    private String interest;
     
 }
