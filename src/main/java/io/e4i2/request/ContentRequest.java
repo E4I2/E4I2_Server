@@ -16,6 +16,6 @@ public class ContentRequest {
     private String age;
     private String sex;
     private String relation;
-    private String interest;
+    private List <String> interest;
     
 }
