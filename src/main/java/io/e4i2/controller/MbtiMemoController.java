@@ -85,7 +85,7 @@ public class MbtiMemoController {
 
         MbtiMemoData.Memo mbtiMemoData = new MbtiMemoData.Memo();
         mbtiMemoData.setMemoId(memoId);
-        mbtiMemoData.setMbti(deviceId);
+        mbtiMemoData.setDeviceId(deviceId);
 
         return mbtiMemoService.deletembtiMemo(mbtiMemoData);
     }

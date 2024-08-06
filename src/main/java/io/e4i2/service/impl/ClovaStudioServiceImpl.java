@@ -27,28 +27,28 @@ import java.util.Map;
 @Service
 @Slf4j
 public class ClovaStudioServiceImpl implements ClovaStudioService {
-    
+
     @Value("${clovastudio.api.url}")
     private String apiUrl;
-    
+
     @Value("${clovastudio.api.key}")
     private String apiKey;
-    
+
     @Value("${clovastudio.api.request.id}}")
     private String requestId;
-    
+
     @Value("${apigw.api.key}")
     private String apigwApiKey;
-    
+
     private final ObjectMapper objectMapper;
-    
+
     private final JPAQueryFactory queryFactory;
-    
+
     public ResponseDTO getResponse(UserMessage userMessage) {
         if (!StringUtils.hasText(userMessage.getMessage())) {
             return basicMessage(userMessage.getMbti());
         }
-        
+
         try {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = setHeader();
@@ -57,17 +57,17 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
             HttpEntity<String> entity = new HttpEntity<>(jsonRequestBody, headers);
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, entity, String.class);
             String responseBody = response.getBody();
-            
+
             // 이벤트 스트림에서 JSON 부분 추출
             List<String> jsonMessages = extractJsonMessages(responseBody);
             ResponseDTO.Message lastMessage = getMessage(jsonMessages);
-            
+
             // 응답 구성
             ResponseDTO.Result result = new ResponseDTO.Result();
             result.setStatus(200);
             result.setMessage("SUCCESS");
             result.setCode("success");
-            
+
             ResponseDTO.MessageData data = new ResponseDTO.MessageData();
             QUploadFile qUploadFile = QUploadFile.uploadFile;
             UploadFile findUploadUrl = queryFactory
@@ -75,27 +75,27 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
                     .where(qUploadFile.mbti.eq(userMessage.getMbti()))
                     .fetchOne();
             data.setProfileImageUrl(findUploadUrl.getFileUrl() == null ? "" : findUploadUrl.getFileUrl());
-            
+
             if (lastMessage != null) {
                 data.setMessages(List.of(lastMessage));
             } else {
                 ResponseDTO.Message message = new ResponseDTO.Message();
                 message.setText("assistant");
-                
+
                 data.setMessages(List.of(message));
             }
-            
+
             ResponseDTO finalResponseDTO = new ResponseDTO();
             finalResponseDTO.setData(data);
             finalResponseDTO.setResult(result);
-            
+
             return finalResponseDTO;
         } catch (Exception e) {
             log.error("Unexpected error", e);
             throw new RuntimeException("Unexpected error: " + e.getMessage(), e);
         }
     }
-    
+
     private ResponseDTO.Message getMessage(List<String> jsonMessages) throws JsonProcessingException {
         if (!jsonMessages.isEmpty()) {
             String lastJsonMessage = jsonMessages.get(jsonMessages.size() - 2); // 마지막 JSON 메시지 가져오기
@@ -109,8 +109,8 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
         }
         return null; // 메시지가 없는 경우 null 반환
     }
-    
-    
+
+
     private HttpHeaders setHeader() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-NCP-CLOVASTUDIO-API-KEY", apiKey);
@@ -120,20 +120,17 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
         headers.set("Accept", "text/event-stream");
         return headers;
     }
-    
+
     private ResponseDTO basicMessage(Mbti mbti) {
         ResponseDTO.Result result = new ResponseDTO.Result();
         RestTemplate restTemplate = new RestTemplate();
 
-        // 이따 여기 수정 
-        // 파라미터 추가 (메모 저장 목록 동일하게)
-        // 
         QPrompt qPrompt = QPrompt.prompt;
         Prompt prompt = queryFactory
                 .selectFrom(qPrompt)
                 .where(qPrompt.mbti.eq(mbti))
                 .fetchOne();
-        
+
         UserMessage userMessage = new UserMessage();
         userMessage.setMessage(prompt.getDefaultPrompt());
         Map<String, Object> requestBody = getRequestBody(userMessage);
@@ -145,37 +142,42 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
             throw new RuntimeException(e);
         }
         HttpEntity<String> entity = new HttpEntity<>(jsonRequestBody, headers);
-        
+
         restTemplate.exchange(apiUrl, HttpMethod.POST, entity, String.class);
         result.setStatus(200);
         result.setMessage("SUCCESS");
         result.setCode("success");
-        
+
         ResponseDTO.Message message1 = new ResponseDTO.Message();
         ResponseDTO.Message message2 = new ResponseDTO.Message();
         message1.setText("대화 시뮬레이션을 시작할게요");
         message2.setText("안녕하세요");
-        
+
         QUploadFile qUploadFile = QUploadFile.uploadFile;
         UploadFile findFileUrl = queryFactory
                 .selectFrom(qUploadFile)
                 .where(qUploadFile.mbti.eq(mbti))
                 .fetchOne();
-        
+
         ResponseDTO.MessageData data = new ResponseDTO.MessageData();
         data.setProfileImageUrl(findFileUrl.getFileUrl() == null ? "" : findFileUrl.getFileUrl());
         data.setMessages(List.of(message1, message2));
-        
+
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setData(data);
         responseDTO.setResult(result);
-        
+
         return responseDTO;
     }
     private Map<String, Object> getRequestBody(UserMessage userMessage) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("messages", List.of(
-                Map.of("role", "system", "content", getSystemPrompt(userMessage.getMbti())),
+                Map.of("role", "system", "content", getSystemPrompt(userMessage.getMbti(),
+                                userMessage.getName(),
+                                userMessage.getAge(),
+                                userMessage.getSex(),
+                                userMessage.getRelation(),
+                                userMessage.getInterest())),
                 Map.of("role", "user", "content", userMessage.getMessage())
         ));
         requestBody.put("topP", 0.8);
@@ -187,14 +189,33 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
         requestBody.put("seed", 0);
         return requestBody;
     }
-    
-    private String getSystemPrompt(Mbti mbti) {
+
+    private String getSystemPrompt(Mbti mbti, String name, String age, String sex, String relation, String interest) {
         QPrompt qPrompt = QPrompt.prompt;
         Prompt prompt = queryFactory
                 .selectFrom(qPrompt)
                 .where(qPrompt.mbti.eq(mbti))
                 .fetchOne();
-        return prompt != null ? prompt.getDefaultPrompt() : "MBTI 유형을 찾을 수 없습니다.";
+
+        String promptOption = "";
+
+        if(name!= null && ! name.isEmpty()) {
+            promptOption += "\n이제부터 너의 이름은 " + name +" 야.";
+        }
+        if(age!= null && ! age.isEmpty()) {
+            promptOption += "\n이제부터 너의 연령대는 " + age +"야.";
+        }
+        if(sex != null && ! sex.isEmpty()) {
+            promptOption += "\n이제부터 너의 성별은 " + sex +"야.";
+        }
+        if(relation != null && ! relation.isEmpty()) {
+            promptOption += "\n그리고 대화를 걸 상대에게 너는 " + relation +"라는 존재야.";
+        }
+        if(interest != null && ! interest.isEmpty()) {
+            promptOption += "\n너의 관심사는 " + interest +"야.";
+        }
+
+        return prompt != null ? prompt.getDefaultPrompt() + promptOption : "MBTI 유형을 찾을 수 없습니다.";
     }
     private List<String> extractJsonMessages(String responseBody) {
         List<String> jsonMessages = new ArrayList<>();

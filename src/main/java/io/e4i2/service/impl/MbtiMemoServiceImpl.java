@@ -127,9 +127,14 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
         MbtiMemoData.Memo mbtiMemo = new MbtiMemoData.Memo();
 
         String deviceId = mbtiMemoData.getDeviceId();
+        System.out.println("deviceId : " + deviceId);
+
         mbtiMemo = mbtiMemoDAO.duplicationCheck(deviceId);
 
         mbtiMemoData.setDevicePk(mbtiMemo.getDevicePk());
+        System.out.println("getDevicePk : " + mbtiMemo.getDevicePk());
+
+
         mbtiMemoDAO.deletembtiMemo(mbtiMemoData);
         return new ResponseDTO(new ResponseDTO.Result(200, "SUCCESS", "success"));
     }
