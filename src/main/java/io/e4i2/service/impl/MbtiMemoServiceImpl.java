@@ -1,6 +1,9 @@
 package io.e4i2.service.impl;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.e4i2.dto.*;
+import io.e4i2.entity.Mbti;
+import io.e4i2.entity.QUploadFile;
 import io.e4i2.repository.MbtiMemoDAO;
 import io.e4i2.service.MbtiMemoService;
 import jakarta.transaction.Transactional;
@@ -19,6 +22,7 @@ import java.util.Map;
 public class MbtiMemoServiceImpl implements MbtiMemoService {
 
     private final MbtiMemoDAO mbtiMemoDAO;
+    private final JPAQueryFactory queryFactory;
 
     // 메모 저장
     @Override
@@ -114,11 +118,23 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
     }
     
     private List<MbtiMemoResponseDTO.Banner> fetchBanners() {
-        // Dummy implementation
+        
         List<MbtiMemoResponseDTO.Banner> banners = new ArrayList<>();
-        MbtiMemoResponseDTO.Banner banner = new MbtiMemoResponseDTO.Banner();
-        banner.setImageUrl("배너 이미지 추가해야함");
-        banners.add(banner);
+       // MbtiMemoResponseDTO.Banner banner = new MbtiMemoResponseDTO.Banner();
+        QUploadFile uploadFile = QUploadFile.uploadFile;
+        
+        List<String> imageList = queryFactory
+                .select(uploadFile.fileUrl)
+                .from(uploadFile)
+                .where(uploadFile.mbti.eq(Mbti.BANNER))
+                .fetch();
+        
+        imageList
+                        .forEach(image -> {
+                            MbtiMemoResponseDTO.Banner banner = new MbtiMemoResponseDTO.Banner();
+                            banner.setImageUrl(image);
+                            banners.add(banner);
+                        });
         return banners;
     }
 
