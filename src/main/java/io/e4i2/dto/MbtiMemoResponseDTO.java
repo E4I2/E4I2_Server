@@ -16,6 +16,7 @@ public class MbtiMemoResponseDTO {
     @Setter
     public static class Banner {
         private String imageUrl;
+        private Integer contentId;
     }
 
     @Getter

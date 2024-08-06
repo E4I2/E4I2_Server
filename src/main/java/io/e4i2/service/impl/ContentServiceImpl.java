@@ -104,14 +104,14 @@ public class ContentServiceImpl implements ContentService {
         Map<String, Object> requestBody = new HashMap<>();
         List<Map<String, String>> messages = new ArrayList<>();
         
-        String systemPrompt = String.format(
-                "User information: MBTI: %s, Name: %s, Age: %s, Sex: %s, Relation: %s, Interests: %s. Give a detailed response based on this information.",
-                contentRequest.getMbti(), contentRequest.getName(), contentRequest.getAge(), contentRequest.getSex(),
-                contentRequest.getRelation(), String.join(", ", contentRequest.getInterest())
-        );
+//        String systemPrompt = String.format(
+//                "User information: MBTI: %s, Name: %s, Age: %s, Sex: %s, Relation: %s, Interests: %s. Give a detailed response based on this information.",
+//                contentRequest.getMbti(), contentRequest.getName(), contentRequest.getAge(), contentRequest.getSex(),
+//                contentRequest.getRelation(), String.join(", ", contentRequest.getInterest())
+//        );
         
-        messages.add(Map.of("role", "system", "content", systemPrompt));
-        messages.add(Map.of("role", "user", "content", contentPrompt));
+        messages.add(Map.of("role", "system", "content", contentPrompt));
+        //messages.add(Map.of("role", "user", "content", contentPrompt));
         
         requestBody.put("messages", messages);
         requestBody.put("maxTokens", 256);
