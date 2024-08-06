@@ -132,7 +132,17 @@ public class MbtiMemoServiceImpl implements MbtiMemoService {
         imageList
                         .forEach(image -> {
                             MbtiMemoResponseDTO.Banner banner = new MbtiMemoResponseDTO.Banner();
-                            banner.setImageUrl(image);
+                            if("https://e4i2-files.s3.ap-northeast-2.amazonaws.com/d26e9d6d-b8e1-4c3b-8c74-d8514588a7e7.png".equals(image)){
+                                banner.setImageUrl(image);
+                                banner.setContentId(1);
+                            }else if("https://e4i2-files.s3.ap-northeast-2.amazonaws.com/2056b68d-d535-46db-a8a5-f0129b47ea2b.png".equals(image)){
+                                banner.setImageUrl(image);
+                                banner.setContentId(2);
+                            }else {
+                                banner.setImageUrl(image);
+                                banner.setContentId(3);
+                            }
+                            
                             banners.add(banner);
                         });
         return banners;
