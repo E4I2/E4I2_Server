@@ -8,7 +8,7 @@
 
     <!-- 디바이스별 API 호출시 디바이스명 인서트 -->
     <insert id="insertDevice" parameterType="io.e4i2.dto.DeviceEvtDTO" useGeneratedKeys="true" keyProperty="devicePk">
-        INSERT INTO DEVICE
+        INSERT INTO device
             (DEVICE_ID)
         VALUES
             (#{deviceId})
@@ -16,7 +16,7 @@
 
     <!-- 디바이스별 API 호출시 디바이스 로그 인서트 -->
     <insert id="insertDeviceEvt" parameterType="io.e4i2.dto.DeviceEvtDTO">
-        INSERT INTO DEVICE_EVT
+        INSERT INTO device_evt
             (DEVICE_PK, EVENT_NAME, EVENT_TIME)
         VALUES
             (#{devicePk}, #{eventName}, NOW())
@@ -24,7 +24,7 @@
  <select id="duplicationCheck" parameterType="io.e4i2.dto.DeviceEvtDTO" resultType="io.e4i2.dto.DeviceEvtDTO">
      SELECT DEVICE_PK
           , DEVICE_ID
-     FROM DEVICE
+     FROM device
      WHERE DEVICE_ID = #{deviceId}
  </select>
 
