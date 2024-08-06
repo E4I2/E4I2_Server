@@ -11,7 +11,7 @@ import java.util.List;
 public class MbtiMemoData {
     private List<Banner> banners;
     private List<Memo> memos;
-
+    private List<ResponseMemo> ResponseMemos;
 
 
     @Getter
@@ -43,4 +43,22 @@ public class MbtiMemoData {
             private int interestId;
         }
     }
+
+    @Getter
+    @Setter
+    public static class ResponseMemo {
+        private int memoId;
+        private String name;
+        private String age;
+        private String sex;
+        private String relation;
+        private String interest;
+        private String memoSubmitDate;
+        private String mbti;
+        private String profileImageUrl;
+        private int devicePk;
+        private String deviceId;
+    }
+
+
 }

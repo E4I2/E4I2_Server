@@ -2,6 +2,7 @@ package io.e4i2.repository;
 
 import io.e4i2.dto.MbtiMemoDTO;
 import io.e4i2.dto.MbtiMemoData;
+import io.e4i2.dto.MbtiMemoResponseDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface MbtiMemoDAO {
     MbtiMemoDTO selectmbtiMemo(MbtiMemoDTO mbtiMemoDTO);
 
     // 디바이스별 메모 목록 조회
-    List<MbtiMemoData.Memo> selectmbtiMemoList(String devicePk);
+    List<MbtiMemoResponseDTO.Memo> selectmbtiMemoList(String devicePk);
 
     // 메모 삭제
     void deletembtiMemo(MbtiMemoData.Memo mbtiMemoData);

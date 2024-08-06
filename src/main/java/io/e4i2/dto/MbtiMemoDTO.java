@@ -8,8 +8,9 @@ import lombok.Setter;
 public class MbtiMemoDTO {
     
     private Result result;
-    private MbtiMemoData data;
-    
+    //private MbtiMemoData data;
+    private MbtiMemoResponseDTO data;
+
     @Getter
     @Setter
     public static class Result {
