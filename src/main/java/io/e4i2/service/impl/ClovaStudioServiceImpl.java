@@ -190,7 +190,7 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
         return requestBody;
     }
 
-    private String getSystemPrompt(Mbti mbti, String name, String age, String sex, String relation, String interest) {
+    private String getSystemPrompt(Mbti mbti, String name, String age, String sex, String relation, List<String> interest) {
         QPrompt qPrompt = QPrompt.prompt;
         Prompt prompt = queryFactory
                 .selectFrom(qPrompt)
@@ -212,7 +212,15 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
             promptOption += "\n그리고 대화를 걸 상대에게 너는 " + relation +"라는 존재야.";
         }
         if(interest != null && ! interest.isEmpty()) {
-            promptOption += "\n너의 관심사는 " + interest +"야.";
+            StringBuilder interestStringBuilder = new StringBuilder();
+            for (int i = 0; i < interest.size(); i++) {
+                if (i > 0) {
+                    interestStringBuilder.append(", ");
+                }
+                interestStringBuilder.append(interest.get(i));
+            }
+
+            promptOption += "\n너의 관심사는 " + interestStringBuilder +"야.";
         }
 
         return prompt != null ? prompt.getDefaultPrompt() + promptOption : "MBTI 유형을 찾을 수 없습니다.";

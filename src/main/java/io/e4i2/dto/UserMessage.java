@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class UserMessage {
@@ -18,6 +20,6 @@ public class UserMessage {
     private String age;
     private String sex;
     private String relation;
-    private String interest;
+    private List<String> interest;
     
 }
