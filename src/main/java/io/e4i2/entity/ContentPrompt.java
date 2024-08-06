@@ -21,7 +21,6 @@ public class ContentPrompt {
     private String contentTitle;
     @Column(name = "THUMBNAIL")
     private String thumbnail;
-    @Column(name = "TITLE")
-    private String title;
+
     
 }
