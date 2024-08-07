@@ -2,10 +2,10 @@ package io.e4i2.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.e4i2.dto.ContentDTO;
-import io.e4i2.entity.Content;
-import io.e4i2.entity.ContentPrompt;
-import io.e4i2.entity.QContentPrompt;
+import io.e4i2.entity.*;
 import io.e4i2.repository.ContentPromptRepository;
 import io.e4i2.repository.ContentRepository;
 import io.e4i2.request.ContentRequest;
@@ -51,6 +51,7 @@ public class ContentServiceImpl implements ContentService {
     private final ContentRepository contentRepository;
     private final ContentPromptRepository contentPromptRepository;
     private final ObjectMapper objectMapper;
+    private final JPAQueryFactory queryFactory;
     
     @Override
     public ContentDTO getContentResponse(ContentRequest contentRequest) {
@@ -170,7 +171,20 @@ public class ContentServiceImpl implements ContentService {
             contentWithoutTitle += "\n\n" + additionalMessage;
             return new ContentDTO(200, "SUCCESS", "success", contentPrompt.getThumbnail(), contentPrompt.getContentTitle(), title.isEmpty() ? "방금까지 나눈 대화로 온도를 측정했어요!" : title, contentWithoutTitle, contentRequest.getContentId());
         }
+        QUploadFile uploadFile = QUploadFile.uploadFile;
+        BooleanBuilder builder = new BooleanBuilder();
         
-        return new ContentDTO(200, "SUCCESS", "success", contentPrompt.getThumbnail(), contentPrompt.getContentTitle(), title.isEmpty() ? "방금까지 나눈 대화로 온도를 측정했어요!" : title, contentWithoutTitle, contentRequest.getContentId());
+        builder.and(uploadFile.mbti.eq(Mbti.CHATINGIMAGE));
+        
+        // contentRequest.getMbti()가 null이 아닌 경우 startsWith 조건 추가
+        if (contentRequest.getMbti() != null) {
+            builder.and(uploadFile.originalFilename.startsWith(contentRequest.getMbti()));
+        }
+        String imageUrl = queryFactory
+                .select(uploadFile.fileUrl)
+                .from(uploadFile)
+                .where(builder)
+                .fetchOne();
+        return new ContentDTO(200, "SUCCESS", "success", imageUrl, contentPrompt.getContentTitle(), title.isEmpty() ? "방금까지 나눈 대화로 온도를 측정했어요!" : title, contentWithoutTitle, contentRequest.getContentId());
     }
 }
