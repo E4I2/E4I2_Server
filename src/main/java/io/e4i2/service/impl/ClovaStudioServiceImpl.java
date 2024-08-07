@@ -183,8 +183,8 @@ public class ClovaStudioServiceImpl implements ClovaStudioService {
         requestBody.put("topP", 0.8);
         requestBody.put("topK", 0);
         requestBody.put("maxTokens", 256);
-        requestBody.put("temperature", 0.5);
-        requestBody.put("repeatPenalty", 5.0);
+        requestBody.put("temperature", 0.6);
+        requestBody.put("repeatPenalty", 6.0);
         requestBody.put("includeAiFilters", true);
         requestBody.put("seed", 0);
         return requestBody;
