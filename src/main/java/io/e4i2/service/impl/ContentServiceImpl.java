@@ -108,8 +108,7 @@ public class ContentServiceImpl implements ContentService {
         String systemPrompt = String.format(
                 "You information: MBTI: %s, Name: %s, Age: %s, Sex: %s, Relation: %s, Interests: %s. Give a detailed response based on this information.",
                 contentRequest.getMbti(), contentRequest.getName(), contentRequest.getAge(), contentRequest.getSex(),
-                contentRequest.getRelation(), String.join(", ", contentRequest.getInterest())
-        );
+                contentRequest.getRelation(), contentRequest.getInterest() != null ? String.join(", ", contentRequest.getInterest()) : null);
         String s = systemPrompt + " " + contentPrompt;
         messages.add(Map.of("role", "system", "content", s));
         //messages.add(Map.of("role", "user", "content", contentPrompt));
