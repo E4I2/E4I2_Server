@@ -173,18 +173,18 @@ public class ContentServiceImpl implements ContentService {
         }
         QUploadFile uploadFile = QUploadFile.uploadFile;
         BooleanBuilder builder = new BooleanBuilder();
-        
         builder.and(uploadFile.mbti.eq(Mbti.CHATINGIMAGE));
         
         // contentRequest.getMbti()가 null이 아닌 경우 startsWith 조건 추가
         if (contentRequest.getMbti() != null) {
+        
             builder.and(uploadFile.originalFilename.startsWith(contentRequest.getMbti()));
         }
-        String imageUrl = queryFactory
+        List<String> imageUrl = queryFactory
                 .select(uploadFile.fileUrl)
                 .from(uploadFile)
                 .where(builder)
-                .fetchOne();
-        return new ContentDTO(200, "SUCCESS", "success", imageUrl, contentPrompt.getContentTitle(), title.isEmpty() ? "방금까지 나눈 대화로 온도를 측정했어요!" : title, contentWithoutTitle, contentRequest.getContentId());
+                .fetch();
+        return new ContentDTO(200, "SUCCESS", "success", imageUrl.size() != 1 ? null : imageUrl.get(0), contentPrompt.getContentTitle(), title.isEmpty() ? "방금까지 나눈 대화로 온도를 측정했어요!" : title, contentWithoutTitle, contentRequest.getContentId());
     }
 }
