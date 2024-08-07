@@ -160,7 +160,7 @@ public class ContentServiceImpl implements ContentService {
             // 온도에 따른 메시지 추가
             String additionalMessage = "";
             if (temperature <= 0) {
-                additionalMessage = "공곰 얼 것만 같은 대화.. 이 추위를 녹일 불씨 같은 팁이 필요하다면, 대화 주제 혹은 대화 꿀팁 기능을 이용해보세요!";
+                additionalMessage = "꽁꽁 얼 것만 같은 대화.. 이 추위를 녹일 불씨 같은 팁이 필요하다면, 대화 주제 혹은 대화 꿀팁 기능을 이용해보세요!";
             } else if (temperature > 0 && temperature < 36) {
                 additionalMessage = "약간 싸늘한 온도네요! 조금 더 대화를 나눠볼까요? 온도를 높이고 싶다면, 대화 주제 혹은 대화 꿀팁 기능을 통해 팁을 얻어보도 좋아요~";
             } else if (temperature >= 36) {
