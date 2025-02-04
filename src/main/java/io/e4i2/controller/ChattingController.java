@@ -4,7 +4,6 @@ package io.e4i2.controller;
 import io.e4i2.create.ChattingRoomCreate;
 import io.e4i2.dto.ChattingRoomDTO;
 import io.e4i2.service.ChattingRoomService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
